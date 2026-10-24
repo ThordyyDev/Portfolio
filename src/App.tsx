@@ -164,6 +164,46 @@ function SkillRowItem({
   );
 }
 
+function PortraitCard({ profile }: { profile: PortfolioProfile }) {
+  const { displayed, trigger } = useScramble(profile.name, { duration: 420, speed: 20 });
+
+  return (
+    <div
+      onMouseEnter={() => trigger()}
+      onMouseLeave={() => trigger()}
+      className="relative w-full max-w-sm sm:max-w-md lg:max-w-none h-[340px] sm:h-[440px] lg:h-full rounded-2xl overflow-hidden border border-zinc-800 bg-[#09090b] flex flex-col justify-between group shadow-2xl cursor-default"
+    >
+      {/* Portrait Image */}
+      <img
+        src={profile.portraitUrl}
+        alt={`${profile.name} portrait`}
+        referrerPolicy="no-referrer"
+        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+      />
+
+      {/* Gradient Scrim */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent pointer-events-none" />
+
+      {/* Clean Bottom Label with Scramble Effect */}
+      <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 flex items-center justify-between gap-2 text-xs text-zinc-300">
+        <span
+          onMouseEnter={(e) => {
+            e.stopPropagation();
+            trigger();
+          }}
+          className="font-mono text-[11px] text-zinc-300 hover:text-white transition-colors truncate tracking-wide"
+        >
+          {displayed}
+        </span>
+        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] font-mono rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 whitespace-nowrap shrink-0">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          Available for Roles
+        </span>
+      </div>
+    </div>
+  );
+}
+
 const INQUIRY_OPTIONS = [
   'Frontend / Web Dev',
   'Full-Stack / Backend',
@@ -495,29 +535,7 @@ export default function App() {
                 }}
                 className="lg:col-span-5 flex flex-col items-center justify-center"
               >
-                <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-none h-[340px] sm:h-[440px] lg:h-full rounded-2xl overflow-hidden border border-zinc-800 bg-[#09090b] flex flex-col justify-between group shadow-2xl">
-                  {/* Portrait Image */}
-                  <img
-                    src={profile.portraitUrl}
-                    alt={`${profile.name} portrait`}
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-                  />
-
-                  {/* Gradient Scrim */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent pointer-events-none" />
-
-                  {/* Clean Bottom Label */}
-                  <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 flex items-center justify-between gap-2 text-xs text-zinc-300">
-                    <span className="font-mono text-[11px] text-zinc-300 truncate">
-                      {profile.name}
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] font-mono rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 whitespace-nowrap shrink-0">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      Available for Roles
-                    </span>
-                  </div>
-                </div>
+                <PortraitCard profile={profile} />
               </motion.div>
             </div>
 

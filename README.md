@@ -1,50 +1,47 @@
-# ThordyyDev — Developer Portfolio
+# 🚀 ThordyyDev — Personal Portfolio
 
-A high-performance, dark monochrome portfolio built with **React 19**, **TypeScript**, **Vite**, and **Tailwind CSS**. Features interactive case study inspection, technical skill matrix filtering, text decoding animations, and a responsive floating navigation dock.
+Welcome to my personal developer portfolio! This project showcases my work, technical skills, background, and hands-on case studies. Feel free to explore the live demo, inspect the code, or reach out!
+
+👉 **[Check out the Live Demo](https://thordyydev-portfolio.vercel.app)**
+
+---
+
+## ✨ Features
+
+* **Monochrome Aesthetics:** Clean, high-performance dark theme UI design.
+* **Interactive Case Studies:** Deep-dive inspection into project architectures and outcomes.
+* **Dynamic Skill Matrix:** Filterable technical skills based on category/stack.
+* **Smooth Animations:** Powered by Framer Motion with custom text-decoding effects.
+* **Floating Navigation Dock:** Responsive, quick-access menu designed for seamless browsing.
 
 ---
 
 ## ⚡ Tech Stack
 
-- **Framework**: React 19 + TypeScript
-- **Build Tool**: Vite
-- **Styling**: Tailwind CSS
-- **Icons**: Lucide React
-- **Animations**: Framer Motion (`motion/react`)
+* **Frontend Framework:** React 19 + TypeScript
+* **Build Tool:** Vite
+* **Styling:** Tailwind CSS
+* **Icons:** Lucide React
+* **Animations:** Framer Motion (`motion/react`)
 
 ---
 
-## 🚀 Getting Started
+## 🛠️ Getting Started
 
 ### Prerequisites
-- Node.js (v18+)
-- npm or yarn
+* **Node.js**: `v18.0.0` or higher
+* **Package Manager**: `npm`, `yarn`, or `pnpm`
 
-### Installation
+### Quick Run
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/ThordyyDev/Portfolio.git
-   ```
-2. Navigate to the directory:
-   ```bash
-   cd Portfolio
-   ```
-3. Install dependencies:
-   ```bash
-   npm install
-   ```
-4. Start the local development server:
-   ```bash
-   npm run dev
-   ```
+```bash
+npm install
+npm run dev
+```
 
 ---
 
-## 🌐 Deployment
-
-This project is optimized for instant zero-config deployment on **[Vercel](https://vercel.com)**:
-
-1. Import this repository into Vercel.
-2. Framework preset will automatically detect **Vite**.
-3. Deploy!
+## 💬 Connect & Feedback
+I'm always open to feedback, collaboration opportunities, or just a friendly chat!
+* GitHub: [@ThordyyDev](https://github.com/ThordyyDev)
+* Portfolio: [ThordyyDev Portfolio](https://thordyydev-portfolio.vercel.app)
