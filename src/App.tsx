@@ -68,7 +68,7 @@ function NavTabItem({
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      className={`relative flex-1 inline-flex items-center justify-center gap-1.5 sm:gap-2.5 px-2.5 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-full whitespace-nowrap select-none transition-colors duration-200 overflow-hidden ${
+      className={`relative flex-1 inline-flex items-center justify-center gap-1 sm:gap-2 px-1.5 sm:px-5 py-1.5 sm:py-2 text-[11px] sm:text-sm font-medium rounded-full whitespace-nowrap select-none transition-colors duration-200 overflow-hidden ${
         isActive
           ? 'text-black font-semibold'
           : isHovered
@@ -76,7 +76,7 @@ function NavTabItem({
           : 'text-zinc-400'
       }`}
     >
-      {/* Active White Pill with Spring Transition */}
+      {/* Active White Pill — Locked on Home */}
       {isActive && (
         <motion.div
           layoutId="nav-active-pill"
@@ -94,7 +94,7 @@ function NavTabItem({
         />
       )}
 
-      <span className="relative z-10 inline-flex items-center gap-1.5 sm:gap-2.5 whitespace-nowrap leading-none">
+      <span className="relative z-10 inline-flex items-center gap-1 sm:gap-2 whitespace-nowrap leading-none">
         <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
         <span className="whitespace-nowrap">{item.label}</span>
       </span>
@@ -378,7 +378,7 @@ export default function App() {
               <NavTabItem
                 key={item.id}
                 item={item}
-                isActive={activeNav === item.id}
+                isActive={item.id === 'home'}
                 isHovered={hoveredNav === item.id}
                 onMouseEnter={() => setHoveredNav(item.id)}
                 onMouseLeave={() => {}}
@@ -386,9 +386,6 @@ export default function App() {
                   if (item.href === '#') {
                     e.preventDefault();
                     window.scrollTo({ top: 0, behavior: 'smooth' });
-                    setActiveNav('home');
-                  } else {
-                    setActiveNav(item.id);
                   }
                 }}
               />
@@ -399,32 +396,33 @@ export default function App() {
 
       <main>
         {/* SPLIT-SCREEN HERO & FULL-WIDTH METRICS STRIP */}
-        <section className="pt-12 pb-20 md:pt-20 md:pb-28 border-b border-zinc-800/80">
-          <div className="max-w-[1200px] mx-auto px-6 space-y-16">
+        <section className="pt-8 pb-14 sm:pt-16 sm:pb-24 border-b border-zinc-800/80">
+          <div className="max-w-[1200px] mx-auto px-4 sm:px-6 space-y-10 sm:space-y-16">
             {/* 2-Column Split with items-stretch */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
               {/* Left Column: Typographic Hierarchy */}
               <motion.div
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="lg:col-span-7 flex flex-col justify-between space-y-8 py-2"
+                className="lg:col-span-7 flex flex-col justify-between space-y-6 sm:space-y-8 py-1 sm:py-2"
               >
-                <div className="space-y-6">
-                  {/* Clean Status & Role Kicker */}
-                  <div className="flex flex-wrap items-center gap-2.5 text-xs font-mono">
-                    <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-300">
+                <div className="space-y-4 sm:space-y-6">
+                  {/* Clean Status & Role Kicker — Mobile Adaptive */}
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-2.5 text-xs font-mono">
+                    <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-300 w-fit">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                       Available for Projects & Internships
                     </span>
-                    <span className="text-zinc-600 hidden sm:inline" aria-hidden="true">·</span>
-                    <span className="text-zinc-400">Cebu, PH</span>
-                    <span className="text-zinc-600" aria-hidden="true">·</span>
-                    <span className="text-zinc-400">Full-Stack, Mobile & Game Dev</span>
+                    <div className="flex items-center gap-2 text-zinc-400 pl-0.5 sm:pl-0 text-[11px] sm:text-xs">
+                      <span>Cebu, PH</span>
+                      <span className="text-zinc-600" aria-hidden="true">·</span>
+                      <span>Full-Stack, Mobile & Game Dev</span>
+                    </div>
                   </div>
 
                   {/* Display Headline with Relaxed Leading & Harmonic Wrapping */}
-                  <h1 className="font-display text-3xl sm:text-4xl lg:text-[3.2rem] font-bold tracking-tight text-white leading-[1.2] sm:leading-[1.18] [text-wrap:balance]">
+                  <h1 className="font-display text-2xl sm:text-4xl lg:text-[3.2rem] font-bold tracking-tight text-white leading-[1.22] sm:leading-[1.18] [text-wrap:balance]">
                     Hi, I&apos;m ThordyyDev{' '}
                     <span className="text-zinc-400 font-normal">
                       — Building practical software with{' '}
@@ -434,32 +432,32 @@ export default function App() {
                     </span>
                   </h1>
 
-                  {/* Lead Bio Prose with Optimal Measure & Spacing */}
-                  <p className="text-base sm:text-[1.05rem] text-zinc-300 leading-relaxed max-w-[56ch]">
+                  {/* Lead Bio Prose */}
+                  <p className="text-sm sm:text-[1.05rem] text-zinc-300 leading-relaxed max-w-[56ch]">
                     {profile.leadBio}
                   </p>
                 </div>
 
                 {/* Editorial Philosophy Card & Primary CTAs */}
-                <div className="space-y-6 pt-6 border-t border-zinc-800/80">
+                <div className="space-y-5 sm:space-y-6 pt-5 sm:pt-6 border-t border-zinc-800/80">
                   {/* High-Legibility Philosophy Callout Card */}
-                  <div className="p-4 sm:p-4.5 rounded-xl bg-zinc-900/50 border border-zinc-800/80 backdrop-blur-sm flex items-start gap-3.5 shadow-sm">
+                  <div className="p-3.5 sm:p-4.5 rounded-xl bg-zinc-900/50 border border-zinc-800/80 backdrop-blur-sm flex items-start gap-3 shadow-sm">
                     <Quote className="w-4 h-4 text-zinc-400 shrink-0 mt-0.5" />
                     <div className="space-y-1">
-                      <p className="text-sm sm:text-[0.925rem] text-zinc-200 font-sans leading-relaxed font-normal">
+                      <p className="text-xs sm:text-[0.925rem] text-zinc-200 font-sans leading-relaxed font-normal">
                         “{profile.editorialPhilosophy}”
                       </p>
-                      <span className="text-[11px] font-mono text-zinc-400 block tracking-wider uppercase">
+                      <span className="text-[10px] sm:text-[11px] font-mono text-zinc-400 block tracking-wider uppercase">
                         Philosophy &amp; Approach
                       </span>
                     </div>
                   </div>
 
-                  {/* Action Buttons */}
-                  <div className="flex flex-wrap items-center gap-3">
+                  {/* Action Buttons — Full Width Stack on Mobile, Inline on Desktop */}
+                  <div className="grid grid-cols-1 sm:flex sm:items-center gap-2.5 sm:gap-3">
                     <a
                       href="#works"
-                      className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-semibold text-black bg-white rounded-lg hover:bg-zinc-200 transition-all shadow-sm whitespace-nowrap shrink-0 cursor-pointer"
+                      className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-xs font-semibold text-black bg-white rounded-lg hover:bg-zinc-200 transition-all shadow-sm whitespace-nowrap cursor-pointer"
                     >
                       Explore Works
                       <ArrowUpRight className="w-4 h-4" />
@@ -469,7 +467,7 @@ export default function App() {
                       href={profile.githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-medium text-white bg-zinc-900 border border-zinc-800 rounded-lg hover:bg-zinc-800 hover:border-zinc-700 transition-all whitespace-nowrap shrink-0"
+                      className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-xs font-medium text-white bg-zinc-900 border border-zinc-800 rounded-lg hover:bg-zinc-800 hover:border-zinc-700 transition-all whitespace-nowrap"
                     >
                       <Github className="w-4 h-4" />
                       GitHub Profile
@@ -477,7 +475,7 @@ export default function App() {
 
                     <a
                       href="#contact"
-                      className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-medium text-zinc-300 border border-zinc-800 rounded-lg hover:bg-zinc-900 hover:text-white transition-all whitespace-nowrap shrink-0"
+                      className="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-medium text-zinc-300 border border-zinc-800 rounded-lg hover:bg-zinc-900 hover:text-white transition-all whitespace-nowrap"
                     >
                       <Mail className="w-4 h-4" />
                       Contact Me
@@ -486,7 +484,7 @@ export default function App() {
                 </div>
               </motion.div>
 
-              {/* Right Column: Clean Author Portrait */}
+              {/* Right Column: Clean Author Portrait — Controlled Height on Mobile */}
               <motion.div
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -495,9 +493,9 @@ export default function App() {
                   delay: 0.08,
                   ease: [0.16, 1, 0.3, 1],
                 }}
-                className="lg:col-span-5 flex flex-col"
+                className="lg:col-span-5 flex flex-col items-center justify-center"
               >
-                <div className="relative flex-1 min-h-[440px] lg:h-full rounded-2xl overflow-hidden border border-zinc-800 bg-[#09090b] flex flex-col justify-between group shadow-2xl">
+                <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-none h-[340px] sm:h-[440px] lg:h-full rounded-2xl overflow-hidden border border-zinc-800 bg-[#09090b] flex flex-col justify-between group shadow-2xl">
                   {/* Portrait Image */}
                   <img
                     src={profile.portraitUrl}
@@ -510,14 +508,11 @@ export default function App() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent pointer-events-none" />
 
                   {/* Clean Bottom Label */}
-                  <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-2 text-xs text-zinc-300">
-                    <ScrambleText
-                      text={profile.portraitCaption}
-                      className="font-mono text-[11px] text-zinc-400 truncate"
-                      duration={900}
-                      speed={35}
-                    />
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-mono rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 whitespace-nowrap shrink-0">
+                  <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 flex items-center justify-between gap-2 text-xs text-zinc-300">
+                    <span className="font-mono text-[11px] text-zinc-300 truncate">
+                      {profile.name}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] font-mono rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 whitespace-nowrap shrink-0">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                       Available for Roles
                     </span>
@@ -526,17 +521,20 @@ export default function App() {
               </motion.div>
             </div>
 
-            {/* Full-Width 4-Column Quantitative KPI Row Below the Split */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pt-12 border-t border-zinc-800/80">
+            {/* Full-Width Quantitative KPI Row — 2x2 Grid on Mobile, 4 Columns on Desktop */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 lg:gap-8 pt-8 sm:pt-12 border-t border-zinc-800/80">
               {profile.metrics.map((m, idx) => (
-                <div key={idx} className="space-y-1.5">
-                  <div className="font-mono text-3xl md:text-4xl font-semibold text-white tabular-nums tracking-tight">
+                <div
+                  key={idx}
+                  className="p-3.5 sm:p-0 rounded-xl bg-zinc-900/40 sm:bg-transparent border border-zinc-800/60 sm:border-0 space-y-1"
+                >
+                  <div className="font-mono text-2xl sm:text-3xl md:text-4xl font-semibold text-white tabular-nums tracking-tight">
                     {m.value}
                   </div>
-                  <div className="text-sm font-medium text-zinc-200">
+                  <div className="text-xs sm:text-sm font-medium text-zinc-200 line-clamp-1">
                     {m.label}
                   </div>
-                  <div className="text-xs text-zinc-500 font-mono">
+                  <div className="text-[11px] sm:text-xs text-zinc-500 font-mono line-clamp-1">
                     {m.timeframe}
                   </div>
                 </div>
@@ -1117,10 +1115,10 @@ export default function App() {
             transition={{ type: 'spring', stiffness: 400, damping: 28 }}
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             aria-label="Scroll back to top"
-            className="group fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-40 flex items-center gap-2 px-3.5 py-2.5 rounded-full bg-zinc-950/90 border border-zinc-800/90 backdrop-blur-xl text-zinc-400 hover:text-black hover:bg-white hover:border-white shadow-[0_10px_30px_-5px_rgba(0,0,0,0.8),0_0_0_1px_rgba(255,255,255,0.06)] transition-all duration-300 cursor-pointer"
+            className="group fixed bottom-4 right-4 sm:bottom-8 sm:right-8 z-40 flex items-center justify-center gap-1.5 p-2.5 sm:px-3.5 sm:py-2.5 rounded-full bg-zinc-950/90 border border-zinc-800/90 backdrop-blur-xl text-zinc-400 hover:text-black hover:bg-white hover:border-white shadow-[0_10px_30px_-5px_rgba(0,0,0,0.8),0_0_0_1px_rgba(255,255,255,0.06)] transition-all duration-300 cursor-pointer"
           >
             <ArrowUp className="w-4 h-4 transition-transform duration-300 group-hover:-translate-y-0.5" />
-            <span className="text-xs font-mono font-medium tracking-wide">TOP</span>
+            <span className="hidden sm:inline text-xs font-mono font-medium tracking-wide">TOP</span>
           </motion.button>
         )}
       </AnimatePresence>
