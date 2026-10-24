@@ -1,0 +1,6 @@
+{
+  "name": "Monochrome — Minimalist Engineering & Design Portfolio",
+  "description": "A stark black-and-white editorial portfolio featuring customizable portrait photography, interactive project case studies, live GitHub repository integration, skill taxonomy, and a curated portfolio prompt studio.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
