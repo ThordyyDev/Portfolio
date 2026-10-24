@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { motion } from 'motion/react';
 import { X, ArrowUpRight, Github } from 'lucide-react';
 import { CaseStudy } from '../data/portfolioData';
 
@@ -31,15 +32,28 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
   if (!study) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 md:p-8 overflow-y-auto"
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-6 md:p-8 overflow-y-auto"
       role="dialog"
       aria-modal="true"
       aria-labelledby="case-study-modal-title"
       onClick={onClose}
     >
-      <div
-        className="relative w-full max-w-5xl bg-[#09090b] border border-zinc-800 rounded-2xl overflow-hidden my-auto max-h-[90vh] flex flex-col"
+      <motion.div
+        initial={{ opacity: 0, scale: 0.92, y: 24 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.94, y: 16 }}
+        transition={{
+          type: 'spring',
+          damping: 26,
+          stiffness: 340,
+          mass: 0.8,
+        }}
+        className="relative w-full max-w-5xl bg-[#09090b] border border-zinc-800 rounded-2xl overflow-hidden my-auto max-h-[90vh] flex flex-col shadow-[0_25px_70px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.08)]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Modal Bar */}
@@ -223,7 +237,7 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };

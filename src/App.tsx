@@ -692,6 +692,8 @@ export default function App() {
                     initial={{ opacity: 0, y: 16 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: '-40px' }}
+                    whileHover={{ y: -4, transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
+                    whileTap={{ scale: 0.985 }}
                     transition={{
                       duration: 0.45,
                       delay: idx * 0.05,
@@ -1114,12 +1116,17 @@ export default function App() {
       </footer>
 
       {/* FULLSCREEN CASE STUDY READER MODAL */}
-      <CaseStudyModal
-        study={selectedStudy}
-        onClose={() => setSelectedStudy(null)}
-        onUpdateStudyImage={handleUpdateStudyImage}
-        onSelectSkillFilter={handleSelectSkill}
-      />
+      <AnimatePresence>
+        {selectedStudy && (
+          <CaseStudyModal
+            key={selectedStudy.id}
+            study={selectedStudy}
+            onClose={() => setSelectedStudy(null)}
+            onUpdateStudyImage={handleUpdateStudyImage}
+            onSelectSkillFilter={handleSelectSkill}
+          />
+        )}
+      </AnimatePresence>
 
       {/* FLOATING BACK TO TOP BUTTON — Appears smoothly on scroll down */}
       <AnimatePresence>
