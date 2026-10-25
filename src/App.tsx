@@ -323,8 +323,6 @@ export default function App() {
   const [contactScope, setContactScope] = useState('Full-Stack / Backend');
   const [contactMessage, setContactMessage] = useState('');
   const [contactSubmitted, setContactSubmitted] = useState(false);
-  const [contactSending, setContactSending] = useState(false);
-  const [contactError, setContactError] = useState<string | null>(null);
   const [emailCopied, setEmailCopied] = useState(false);
 
   const handleUpdateStudyImage = (studyId: string, newImageUrl: string) => {
@@ -359,38 +357,24 @@ export default function App() {
     setTimeout(() => setEmailCopied(false), 1800);
   };
 
-  const handleContactSubmit = async (e: React.FormEvent) => {
+  const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!contactName.trim() || !contactEmail.trim() || !contactMessage.trim())
       return;
-    setContactSending(true);
-    setContactError(null);
-    try {
-      const res = await fetch('https://formspree.io/f/jhulygodinezedu@gmail.com', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          name: contactName,
-          email: contactEmail,
-          inquiry_type: contactScope,
-          message: contactMessage,
-          _subject: `${contactScope} — Inquiry from ${contactName}`,
-        }),
-      });
-      if (res.ok) {
-        setContactSubmitted(true);
-      } else {
-        const data = await res.json().catch(() => ({}));
-        setContactError(
-          (data as { error?: string }).error ||
-            'Failed to send. Please try emailing directly.'
-        );
-      }
-    } catch {
-      setContactError('Network error. Please try emailing directly.');
-    } finally {
-      setContactSending(false);
-    }
+
+    const subject = encodeURIComponent(
+      `${contactScope} — Inquiry from ${contactName}`
+    );
+    const body = encodeURIComponent(
+      `Name: ${contactName}\nEmail: ${contactEmail}\nInquiry Type: ${contactScope}\n\n${contactMessage}`
+    );
+    const mailtoUrl = `mailto:jhulygodinezedu@gmail.com?subject=${subject}&body=${body}`;
+
+    // Open email client with pre-filled fields
+    window.open(mailtoUrl, '_blank');
+
+    // Show success state
+    setContactSubmitted(true);
   };
 
   // Portrait CSS filter classes
@@ -1094,31 +1078,12 @@ export default function App() {
                         className="w-full px-3.5 py-2.5 text-sm text-white bg-[#050505] border border-zinc-800 rounded-lg focus:outline-none focus:border-white transition-colors"
                       />
                     </div>
-                    {contactError && (
-                      <p className="text-xs text-red-400 text-center py-1">
-                        {contactError}
-                      </p>
-                    )}
-
                     <button
                       type="submit"
-                      disabled={contactSending}
-                      className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 text-xs font-medium text-black bg-white rounded-lg hover:bg-zinc-200 transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                      className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 text-xs font-medium text-black bg-white rounded-lg hover:bg-zinc-200 transition-colors cursor-pointer"
                     >
-                      {contactSending ? (
-                        <>
-                          <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
-                          </svg>
-                          Sending…
-                        </>
-                      ) : (
-                        <>
-                          <Mail className="w-4 h-4" />
-                          Send Inquiry
-                        </>
-                      )}
+                      <Mail className="w-4 h-4" />
+                      Send Inquiry
                     </button>
                   </form>
                 )}
