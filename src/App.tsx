@@ -26,6 +26,7 @@ import {
   Terminal,
   Activity,
   Code2,
+  Quote,
 } from 'lucide-react';
 import {
   INITIAL_PROFILE,
@@ -116,6 +117,69 @@ function CertificationLogo({ type }: { type: CertificationItem['issuerType'] }) 
     );
   }
   return <Award className="w-8 h-8 text-white" />;
+}
+
+// 3-Discipline Matrix Components from 4a4a032
+function DisciplineHeader({
+  groupIndex,
+  domain,
+  description,
+}: {
+  groupIndex: string;
+  domain: string;
+  description: string;
+}) {
+  return (
+    <div className="space-y-1.5 pb-3 border-b border-zinc-900 cursor-default select-none">
+      <span className="text-[10px] font-mono text-zinc-500 tabular-nums uppercase tracking-widest">
+        DISCIPLINE {groupIndex}
+      </span>
+      <h3 className="font-display text-sm sm:text-base font-bold text-white tracking-tight">
+        {domain}
+      </h3>
+      <p className="text-xs text-zinc-400 leading-relaxed font-normal">
+        {description}
+      </p>
+    </div>
+  );
+}
+
+function SkillRowItem({
+  skill,
+  isSelected,
+  onSelect,
+}: {
+  skill: { name: string; proficiency: string; years: string };
+  isSelected: boolean;
+  onSelect: () => void;
+}) {
+  const { displayed, trigger } = useScramble(skill.name, { duration: 360, speed: 20 });
+
+  return (
+    <button
+      type="button"
+      onClick={onSelect}
+      onMouseLeave={() => trigger()}
+      className={`w-full py-2.5 px-2 flex items-center justify-between text-left transition-colors rounded cursor-pointer select-none ${
+        isSelected
+          ? 'bg-white text-black font-semibold'
+          : 'hover:bg-zinc-900/60 text-zinc-300'
+      }`}
+    >
+      <span className="text-xs font-mono font-medium whitespace-nowrap">
+        {displayed}
+      </span>
+      <div
+        className={`flex items-center gap-1.5 text-[11px] font-mono tabular-nums ${
+          isSelected ? 'text-black font-medium' : 'text-zinc-500'
+        }`}
+      >
+        <span>{skill.proficiency}</span>
+        <span aria-hidden="true">·</span>
+        <span>{skill.years}</span>
+      </div>
+    </button>
+  );
 }
 
 export default function App() {
@@ -370,13 +434,13 @@ export default function App() {
                   <a
                     key={sec.id}
                     href={sec.href}
-                    className={`group flex items-center justify-between px-2.5 py-1.5 text-xs font-mono rounded-md transition-all ${
+                    className={`group relative flex items-center justify-between px-2.5 py-1.5 text-xs font-mono rounded-md transition-all ${
                       isActive
                         ? 'text-white font-medium bg-zinc-900/90'
                         : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40'
                     }`}
                   >
-                    <span className="flex items-center gap-2">
+                    <span className="flex items-center gap-2 relative z-10">
                       <span
                         className={`text-[10px] ${
                           isActive ? 'text-white' : 'text-zinc-600'
@@ -387,7 +451,7 @@ export default function App() {
                       <span>{sec.label}</span>
                     </span>
                     {isActive && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-white" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-white relative z-10" />
                     )}
                   </a>
                 );
@@ -445,9 +509,9 @@ export default function App() {
         <main className="flex-1 md:ml-64 lg:ml-72 min-w-0">
           <div className="max-w-4xl mx-auto px-5 sm:px-8 lg:px-12 py-10 sm:py-16 space-y-24">
             {/* ===================================================== */}
-            {/* HERO INTRODUCTION (IMAGE 1 BRYL LIM STYLE)           */}
+            {/* HERO INTRODUCTION (ORIGINAL INFORMATION & HEADLINE)   */}
             {/* ===================================================== */}
-            <section id="hero" className="space-y-10 pt-2 sm:pt-4">
+            <section id="hero" className="space-y-8 pt-2 sm:pt-4">
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-8 sm:gap-10">
                 {/* Dithered / Monochrome Author Portrait */}
                 <div className="relative group shrink-0">
@@ -468,21 +532,24 @@ export default function App() {
 
                 {/* Typography and Bio */}
                 <div className="space-y-4 max-w-xl">
-                  <div>
-                    <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-white">
-                      {profile.name}
+                  <div className="space-y-1">
+                    <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white leading-tight">
+                      Hi, I&apos;m ThordyyDev{' '}
+                      <span className="text-zinc-400 font-normal">
+                        — Building practical software with{' '}
+                      </span>
+                      <span className="font-serif italic font-normal text-zinc-100">
+                        purpose and curiosity.
+                      </span>
                     </h1>
-                    <p className="font-mono text-xs sm:text-sm text-zinc-400 mt-1">
-                      IT Student · Full-Stack, Mobile &amp; Game Developer
+                    <p className="font-mono text-xs text-zinc-400">
+                      {profile.role} · {profile.location}
                     </p>
                   </div>
 
-                  <p className="text-sm sm:text-base text-zinc-300 leading-relaxed font-normal">
-                    I build modern web &amp; mobile applications, game engines, and cloud backends. Focused on clean architecture and practical tools.
-                  </p>
-
-                  <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed font-normal">
-                    Right now I'm building cool new stuff every day. I love turning rough ideas into things people actually use.
+                  {/* Original Lead Bio */}
+                  <p className="text-sm text-zinc-300 leading-relaxed font-normal">
+                    {profile.leadBio}
                   </p>
 
                   {/* Clean Links Row */}
@@ -522,84 +589,43 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Highlights & Quantitative KPI Bar (Image 1 Style) */}
-              <div className="space-y-4 pt-4 border-t border-zinc-900/90">
-                {/* Affiliations Banner Strip */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-900/80 flex items-center gap-3">
-                    <Terminal className="w-4 h-4 text-zinc-400 shrink-0" />
-                    <div className="min-w-0">
-                      <div className="text-xs font-semibold text-white truncate">
-                        GDG on Campus
-                      </div>
-                      <div className="text-[10px] font-mono text-zinc-500 uppercase">
-                        Student Developer
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-900/80 flex items-center gap-3">
-                    <Users className="w-4 h-4 text-zinc-400 shrink-0" />
-                    <div className="min-w-0">
-                      <div className="text-xs font-semibold text-white truncate">
-                        PSIA &amp; AAP
-                      </div>
-                      <div className="text-[10px] font-mono text-zinc-500 uppercase">
-                        Active Member
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-900/80 flex items-center gap-3">
-                    <Github className="w-4 h-4 text-zinc-400 shrink-0" />
-                    <div className="min-w-0">
-                      <div className="text-xs font-semibold text-white truncate">
-                        Open Source
-                      </div>
-                      <div className="text-[10px] font-mono text-zinc-500 uppercase">
-                        GitHub Campus
-                      </div>
-                    </div>
-                  </div>
+              {/* Editorial Philosophy Callout Card (From 4a4a032) */}
+              <div className="p-3.5 sm:p-4 rounded-xl bg-zinc-950 border border-zinc-900/80 flex items-start gap-3">
+                <Quote className="w-4 h-4 text-zinc-400 shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <p className="text-xs sm:text-[0.925rem] text-zinc-200 font-sans leading-relaxed font-normal">
+                    “{profile.editorialPhilosophy}”
+                  </p>
+                  <span className="text-[10px] font-mono text-zinc-500 block tracking-wider uppercase">
+                    Philosophy &amp; Approach
+                  </span>
                 </div>
+              </div>
 
-                {/* Big Metric Counters */}
-                <div className="grid grid-cols-3 gap-4 pt-2">
-                  <div className="space-y-1">
-                    <div className="font-mono text-2xl sm:text-3xl font-semibold text-white tracking-tight flex items-center gap-1">
-                      <span>3+ yrs</span>
-                      <ArrowUpRight className="w-4 h-4 text-zinc-600" />
+              {/* Full Quantitative KPI Row (From 4a4a032: 6+, 10+, 100%, 2026) */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+                {profile.metrics.map((m, idx) => (
+                  <div
+                    key={idx}
+                    className="p-3.5 rounded-xl bg-zinc-950 border border-zinc-900/80 space-y-1"
+                  >
+                    <div className="font-mono text-xl sm:text-2xl font-semibold text-white tracking-tight flex items-center justify-between">
+                      <span>{m.value}</span>
+                      <ArrowUpRight className="w-3.5 h-3.5 text-zinc-600" />
                     </div>
-                    <div className="text-[11px] font-mono text-zinc-500 uppercase tracking-wider">
-                      Shipping &amp; Coding
+                    <div className="text-[11px] font-medium text-zinc-300 line-clamp-1">
+                      {m.label}
+                    </div>
+                    <div className="text-[10px] font-mono text-zinc-500 line-clamp-1">
+                      {m.timeframe}
                     </div>
                   </div>
-
-                  <div className="space-y-1">
-                    <div className="font-mono text-2xl sm:text-3xl font-semibold text-white tracking-tight flex items-center gap-1">
-                      <span>6+</span>
-                      <ArrowUpRight className="w-4 h-4 text-zinc-600" />
-                    </div>
-                    <div className="text-[11px] font-mono text-zinc-500 uppercase tracking-wider">
-                      Projects &amp; Repos
-                    </div>
-                  </div>
-
-                  <div className="space-y-1">
-                    <div className="font-mono text-2xl sm:text-3xl font-semibold text-white tracking-tight flex items-center gap-1">
-                      <span>10+</span>
-                      <ArrowUpRight className="w-4 h-4 text-zinc-600" />
-                    </div>
-                    <div className="text-[11px] font-mono text-zinc-500 uppercase tracking-wider">
-                      Core Technologies
-                    </div>
-                  </div>
-                </div>
+                ))}
               </div>
             </section>
 
             {/* ===================================================== */}
-            {/* 01 — PROJECTS SECTION (IMAGE 2 STYLE)                 */}
+            {/* 01 — PROJECTS SECTION (REAL DATA & BENTO CASE STUDIES) */}
             {/* ===================================================== */}
             <CursorTrailZone>
               <section id="projects" className="space-y-8 scroll-mt-12">
@@ -657,7 +683,7 @@ export default function App() {
                   </div>
                 )}
 
-                {/* Project Cards (Stacked/Grid clean layout inspired by Bryl Lim Image 2) */}
+                {/* Project Cards (Stacked clean layout inspired by Bryl Lim Image 2) */}
                 <div className="grid grid-cols-1 gap-6">
                   {filteredStudies.map((study) => (
                     <motion.div
@@ -685,7 +711,11 @@ export default function App() {
                             <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-300">
                               &lt; {study.category.toUpperCase()} &gt;
                             </span>
-                            <span className="text-zinc-500">{study.year}</span>
+                            <div className="flex items-center gap-2 text-zinc-500">
+                              <span>{study.year}</span>
+                              <span>·</span>
+                              <span>{study.readTime}</span>
+                            </div>
                           </div>
 
                           <h3 className="font-display text-xl font-bold text-white group-hover:text-zinc-200 transition-colors flex items-center justify-between">
@@ -722,7 +752,7 @@ export default function App() {
             </CursorTrailZone>
 
             {/* ===================================================== */}
-            {/* 02 — EXPERIENCE SECTION (IMAGE 3 BRYL LIM STYLE)      */}
+            {/* 02 — EXPERIENCE SECTION (REAL BACKGROUND TIMELINE)    */}
             {/* ===================================================== */}
             <section id="experience" className="space-y-6 scroll-mt-12">
               <div className="flex items-center justify-between pb-3 border-b border-zinc-900">
@@ -783,45 +813,79 @@ export default function App() {
             </section>
 
             {/* ===================================================== */}
-            {/* 03 — STACK SECTION (IMAGE 3 BRYL LIM STYLE)           */}
+            {/* 03 — STACK SECTION (FULL 3-DISCIPLINE MATRIX 4a4a032) */}
             {/* ===================================================== */}
-            <section id="stack" className="space-y-6 scroll-mt-12">
+            <section id="stack" className="space-y-8 scroll-mt-12">
               <div className="flex items-center justify-between pb-3 border-b border-zinc-900">
                 <div className="flex items-center gap-3">
                   <span className="font-mono text-xs text-zinc-500">03 —</span>
                   <h2 className="font-mono text-xs font-bold text-white uppercase tracking-wider">
-                    Stack
+                    Stack &amp; Capabilities
                   </h2>
                 </div>
-                <span className="font-mono text-xs text-zinc-500">
-                  CLICK TO FILTER PROJECTS
-                </span>
+                {activeSkillFilter && (
+                  <button
+                    type="button"
+                    onClick={() => setActiveSkillFilter(null)}
+                    className="px-2.5 py-1 text-xs font-mono text-black bg-white rounded hover:bg-zinc-200 transition-colors cursor-pointer"
+                  >
+                    Reset Filter ({activeSkillFilter})
+                  </button>
+                )}
               </div>
 
-              {/* Horizontal Pill Tags */}
-              <div className="flex flex-wrap items-center gap-2">
-                {TECH_STACK_PILLS.map((pill) => {
-                  const isSelected = activeSkillFilter === pill;
-                  return (
-                    <button
-                      key={pill}
-                      type="button"
-                      onClick={() => handleSelectSkill(pill)}
-                      className={`px-3.5 py-2 text-xs font-mono rounded-lg border transition-all cursor-pointer ${
-                        isSelected
-                          ? 'bg-white text-black font-semibold border-white shadow-sm'
-                          : 'bg-[#09090b] text-zinc-300 border-zinc-800 hover:border-zinc-600 hover:text-white'
-                      }`}
-                    >
-                      {pill}
-                    </button>
-                  );
-                })}
+              {/* Quick Horizontal Filter Pills */}
+              <div className="space-y-2">
+                <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest block">
+                  Quick Filter by Stack:
+                </span>
+                <div className="flex flex-wrap items-center gap-2">
+                  {TECH_STACK_PILLS.map((pill) => {
+                    const isSelected = activeSkillFilter === pill;
+                    return (
+                      <button
+                        key={pill}
+                        type="button"
+                        onClick={() => handleSelectSkill(pill)}
+                        className={`px-3 py-1.5 text-xs font-mono rounded-lg border transition-all cursor-pointer ${
+                          isSelected
+                            ? 'bg-white text-black font-semibold border-white shadow-sm'
+                            : 'bg-[#09090b] text-zinc-300 border-zinc-800 hover:border-zinc-600 hover:text-white'
+                        }`}
+                      >
+                        {pill}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Complete 3-Discipline Skill Matrix from 4a4a032 */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-4">
+                {SKILL_GROUPS.map((group) => (
+                  <div key={group.index} className="space-y-4">
+                    <DisciplineHeader
+                      groupIndex={group.index}
+                      domain={group.domain}
+                      description={group.description}
+                    />
+                    <div className="divide-y divide-zinc-900/80">
+                      {group.skills.map((skill) => (
+                        <SkillRowItem
+                          key={skill.name}
+                          skill={skill}
+                          isSelected={activeSkillFilter === skill.name}
+                          onSelect={() => handleSelectSkill(skill.name)}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
             </section>
 
             {/* ===================================================== */}
-            {/* 04 — CERTIFICATIONS & BADGES (IMAGE 3 STYLE)         */}
+            {/* 04 — CERTIFICATIONS & BADGES (PLACEHOLDERS)           */}
             {/* ===================================================== */}
             <section id="certifications" className="space-y-6 scroll-mt-12">
               <div className="flex items-center justify-between pb-3 border-b border-zinc-900">
@@ -831,17 +895,12 @@ export default function App() {
                     Certifications
                   </h2>
                 </div>
-                <a
-                  href={profile.githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-mono text-xs text-zinc-400 hover:text-white transition-colors inline-flex items-center gap-1"
-                >
-                  ALL CERTIFICATIONS <ArrowUpRight className="w-3 h-3" />
-                </a>
+                <span className="font-mono text-xs text-zinc-500">
+                  CREDENTIALS &amp; BADGES
+                </span>
               </div>
 
-              {/* 3 or 4 Card Grid (Bryl Lim Image 3) */}
+              {/* Card Grid with Placeholders */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {INITIAL_CERTIFICATIONS.map((cert) => (
                   <div
@@ -878,7 +937,7 @@ export default function App() {
             </section>
 
             {/* ===================================================== */}
-            {/* 05 — AFFILIATIONS SECTION (IMAGE 4 STYLE)             */}
+            {/* 05 — AFFILIATIONS SECTION (COMMUNITY & CAMPUS)        */}
             {/* ===================================================== */}
             <section id="affiliations" className="space-y-6 scroll-mt-12">
               <div className="flex items-center justify-between pb-3 border-b border-zinc-900">
@@ -919,7 +978,7 @@ export default function App() {
             </section>
 
             {/* ===================================================== */}
-            {/* 06 — GITHUB CONTRIBUTIONS GRID (IMAGE 4 STYLE)        */}
+            {/* 06 — GITHUB CONTRIBUTIONS GRID                        */}
             {/* ===================================================== */}
             <section className="space-y-4 pt-2">
               <div className="flex items-center justify-between pb-3 border-b border-zinc-900">
@@ -976,7 +1035,7 @@ export default function App() {
             </section>
 
             {/* ===================================================== */}
-            {/* 07 — CONTACT & DIRECT DISPATCH                        */}
+            {/* 07 — CONTACT (DIRECT COORDINATES & GMAIL INQUIRY)     */}
             {/* ===================================================== */}
             <section id="contact" className="space-y-6 scroll-mt-12 pb-12">
               <div className="flex items-center justify-between pb-3 border-b border-zinc-900">
@@ -991,122 +1050,179 @@ export default function App() {
                 </span>
               </div>
 
-              <div className="p-6 sm:p-8 rounded-2xl bg-[#09090b] border border-zinc-800">
-                {contactSubmitted ? (
-                  <div className="py-8 text-center space-y-4">
-                    <div className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center mx-auto">
-                      <Check className="w-5 h-5" />
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                {/* Left Coordinates Column (From 4a4a032) */}
+                <div className="lg:col-span-5 space-y-4">
+                  <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed font-normal">
+                    {profile.availability}. Open for web, mobile, and collaborative software projects.
+                  </p>
+
+                  <div className="space-y-2 pt-2 border-t border-zinc-900 font-mono text-xs">
+                    <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-900 space-y-1">
+                      <span className="text-[10px] text-zinc-500 uppercase tracking-widest block">
+                        Electronic Mail
+                      </span>
+                      <div className="flex items-center justify-between gap-2">
+                        <a
+                          href={`mailto:${profile.email}`}
+                          className="text-white hover:underline truncate"
+                        >
+                          {profile.email}
+                        </a>
+                        <button
+                          type="button"
+                          onClick={handleCopyEmail}
+                          className="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 hover:text-white cursor-pointer"
+                        >
+                          {emailCopied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                          {emailCopied ? 'Copied' : 'Copy'}
+                        </button>
+                      </div>
                     </div>
-                    <h3 className="font-display text-xl font-bold text-white">
-                      Inquiry Prepared in Gmail
-                    </h3>
-                    <p className="text-xs sm:text-sm text-zinc-400 max-w-md mx-auto leading-relaxed">
-                      Thank you, {contactName}. A pre-filled draft has opened directly in your browser to send to{' '}
-                      <span className="text-white">{profile.email}</span>.
-                    </p>
-                    <div className="pt-2 flex items-center justify-center gap-3">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setContactSubmitted(false);
-                          setContactName('');
-                          setContactEmail('');
-                          setContactMessage('');
-                        }}
-                        className="px-4 py-2 text-xs font-mono text-zinc-300 border border-zinc-800 rounded-lg hover:bg-zinc-900 cursor-pointer"
+
+                    <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-900 space-y-1">
+                      <span className="text-[10px] text-zinc-500 uppercase tracking-widest block">
+                        Location &amp; Timezone
+                      </span>
+                      <span className="text-white block">
+                        {profile.location} (UTC+8)
+                      </span>
+                    </div>
+
+                    <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-900 space-y-1">
+                      <span className="text-[10px] text-zinc-500 uppercase tracking-widest block">
+                        GitHub
+                      </span>
+                      <a
+                        href={profile.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-white hover:underline inline-flex items-center gap-1"
                       >
-                        Send Another Inquiry
-                      </button>
+                        github.com/ThordyyDev <ArrowUpRight className="w-3 h-3" />
+                      </a>
                     </div>
                   </div>
-                ) : (
-                  <form onSubmit={handleContactSubmit} className="space-y-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-1.5">
-                        <label
-                          htmlFor="contact-name"
-                          className="block text-xs font-mono text-zinc-400"
-                        >
-                          YOUR NAME *
-                        </label>
-                        <input
-                          id="contact-name"
-                          type="text"
-                          required
-                          value={contactName}
-                          onChange={(e) => setContactName(e.target.value)}
-                          placeholder="Bill Cipher"
-                          className="w-full px-3.5 py-2 text-sm text-white bg-[#050505] border border-zinc-800 rounded-lg focus:outline-none focus:border-white transition-colors"
-                        />
+                </div>
+
+                {/* Right Inquiry Form */}
+                <div className="lg:col-span-7 p-6 rounded-2xl bg-[#09090b] border border-zinc-800">
+                  {contactSubmitted ? (
+                    <div className="py-8 text-center space-y-4">
+                      <div className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center mx-auto">
+                        <Check className="w-5 h-5" />
                       </div>
-                      <div className="space-y-1.5">
-                        <label
-                          htmlFor="contact-email"
-                          className="block text-xs font-mono text-zinc-400"
+                      <h3 className="font-display text-xl font-bold text-white">
+                        Inquiry Prepared in Gmail
+                      </h3>
+                      <p className="text-xs sm:text-sm text-zinc-400 max-w-md mx-auto leading-relaxed">
+                        Thank you, {contactName}. A pre-filled draft has opened directly in your browser to send to{' '}
+                        <span className="text-white">{profile.email}</span>.
+                      </p>
+                      <div className="pt-2 flex items-center justify-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setContactSubmitted(false);
+                            setContactName('');
+                            setContactEmail('');
+                            setContactMessage('');
+                          }}
+                          className="px-4 py-2 text-xs font-mono text-zinc-300 border border-zinc-800 rounded-lg hover:bg-zinc-900 cursor-pointer"
                         >
-                          YOUR EMAIL *
-                        </label>
-                        <input
-                          id="contact-email"
-                          type="email"
-                          required
-                          value={contactEmail}
-                          onChange={(e) => setContactEmail(e.target.value)}
-                          placeholder="bill@domain.com"
-                          className="w-full px-3.5 py-2 text-sm text-white bg-[#050505] border border-zinc-800 rounded-lg focus:outline-none focus:border-white transition-colors"
-                        />
+                          Send Another Inquiry
+                        </button>
                       </div>
                     </div>
-
-                    <div className="space-y-1.5">
-                      <label className="block text-xs font-mono text-zinc-400">
-                        INQUIRY TYPE
-                      </label>
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                        {INQUIRY_OPTIONS.map((scope) => (
-                          <button
-                            key={scope}
-                            type="button"
-                            onClick={() => setContactScope(scope)}
-                            className={`px-3 py-2 text-xs font-medium rounded-lg text-center cursor-pointer transition-colors ${
-                              contactScope === scope
-                                ? 'bg-white text-black font-semibold'
-                                : 'bg-[#050505] text-zinc-400 border border-zinc-800 hover:text-white'
-                            }`}
+                  ) : (
+                    <form onSubmit={handleContactSubmit} className="space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="space-y-1.5">
+                          <label
+                            htmlFor="contact-name"
+                            className="block text-xs font-mono text-zinc-400"
                           >
-                            {scope}
-                          </button>
-                        ))}
+                            YOUR NAME *
+                          </label>
+                          <input
+                            id="contact-name"
+                            type="text"
+                            required
+                            value={contactName}
+                            onChange={(e) => setContactName(e.target.value)}
+                            placeholder="Your Name"
+                            className="w-full px-3.5 py-2 text-sm text-white bg-[#050505] border border-zinc-800 rounded-lg focus:outline-none focus:border-white transition-colors"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <label
+                            htmlFor="contact-email"
+                            className="block text-xs font-mono text-zinc-400"
+                          >
+                            YOUR EMAIL *
+                          </label>
+                          <input
+                            id="contact-email"
+                            type="email"
+                            required
+                            value={contactEmail}
+                            onChange={(e) => setContactEmail(e.target.value)}
+                            placeholder="your@email.com"
+                            className="w-full px-3.5 py-2 text-sm text-white bg-[#050505] border border-zinc-800 rounded-lg focus:outline-none focus:border-white transition-colors"
+                          />
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="space-y-1.5">
-                      <label
-                        htmlFor="contact-message"
-                        className="block text-xs font-mono text-zinc-400"
+                      <div className="space-y-1.5">
+                        <label className="block text-xs font-mono text-zinc-400">
+                          INQUIRY TYPE
+                        </label>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                          {INQUIRY_OPTIONS.map((scope) => (
+                            <button
+                              key={scope}
+                              type="button"
+                              onClick={() => setContactScope(scope)}
+                              className={`px-3 py-2 text-xs font-medium rounded-lg text-center cursor-pointer transition-colors ${
+                                contactScope === scope
+                                  ? 'bg-white text-black font-semibold'
+                                  : 'bg-[#050505] text-zinc-400 border border-zinc-800 hover:text-white'
+                              }`}
+                            >
+                              {scope}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label
+                          htmlFor="contact-message"
+                          className="block text-xs font-mono text-zinc-400"
+                        >
+                          PROJECT BRIEF OR MESSAGE *
+                        </label>
+                        <textarea
+                          id="contact-message"
+                          rows={3}
+                          required
+                          value={contactMessage}
+                          onChange={(e) => setContactMessage(e.target.value)}
+                          placeholder="Outline your goals, timeline, or collaboration..."
+                          className="w-full px-3.5 py-2 text-sm text-white bg-[#050505] border border-zinc-800 rounded-lg focus:outline-none focus:border-white transition-colors"
+                        />
+                      </div>
+
+                      <button
+                        type="submit"
+                        className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 text-xs font-medium text-black bg-white rounded-lg hover:bg-zinc-200 transition-colors cursor-pointer"
                       >
-                        PROJECT BRIEF OR MESSAGE *
-                      </label>
-                      <textarea
-                        id="contact-message"
-                        rows={3}
-                        required
-                        value={contactMessage}
-                        onChange={(e) => setContactMessage(e.target.value)}
-                        placeholder="Outline your goals, timeline, or collaboration..."
-                        className="w-full px-3.5 py-2 text-sm text-white bg-[#050505] border border-zinc-800 rounded-lg focus:outline-none focus:border-white transition-colors"
-                      />
-                    </div>
-
-                    <button
-                      type="submit"
-                      className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 text-xs font-medium text-black bg-white rounded-lg hover:bg-zinc-200 transition-colors cursor-pointer"
-                    >
-                      <Mail className="w-4 h-4" />
-                      Send Inquiry Directly via Gmail
-                    </button>
-                  </form>
-                )}
+                        <Mail className="w-4 h-4" />
+                        Send Inquiry Directly via Gmail
+                      </button>
+                    </form>
+                  )}
+                </div>
               </div>
             </section>
           </div>
