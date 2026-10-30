@@ -46,6 +46,35 @@ export interface PromptTemplate {
   promptText: string;
 }
 
+export interface ExperienceItem {
+  id: string;
+  year: string;
+  role: string;
+  organization: string;
+  type?: string;
+  description?: string;
+  skills?: string[];
+  link?: string;
+}
+
+export interface CertificationItem {
+  id: string;
+  title: string;
+  issuer: string;
+  issuerType: 'google' | 'oracle' | 'meta' | 'neo4j' | 'freecodecamp' | 'cisco' | 'aws' | 'badge';
+  date: string;
+  verifyUrl: string;
+  credentialCode?: string;
+}
+
+export interface AffiliationItem {
+  id: string;
+  name: string;
+  role: string;
+  tag: string;
+  link?: string;
+}
+
 export interface PortfolioProfile {
   name: string;
   role: string;
@@ -600,6 +629,136 @@ export const SKILL_GROUPS: SkillGroup[] = [
       { name: 'Git & GitHub', proficiency: 'Advanced', years: '3 yrs' }
     ]
   }
+];
+
+export const INITIAL_EXPERIENCES: ExperienceItem[] = [
+  {
+    id: 'exp-fixmo',
+    year: '2026',
+    role: 'Lead Mobile & Backend Developer',
+    organization: 'FixMo · Civic Infrastructure',
+    type: 'Full-Stack & Mobile',
+    description: 'Designed and deployed mobile reporting workflows, real-time ticket sync with Supabase PostgreSQL, and role-based incident dashboards.',
+    skills: ['TypeScript', 'Mobile Dev', 'Supabase', 'PostgreSQL'],
+    link: 'https://github.com/ThordyyDev/FixMo'
+  },
+  {
+    id: 'exp-night-harvest',
+    year: '2026',
+    role: 'Game Programmer & Co-Creator',
+    organization: 'Night-Harvest · Godot 4',
+    type: 'Game Engineering',
+    description: 'Engineered wheat farming simulation algorithms, creature AI state machines, and atmospheric shader pipelines in collaboration with LimbrasonaDev.',
+    skills: ['Godot 4', 'C# / GDScript', 'State Machines', 'Shaders'],
+    link: 'https://github.com/lilzamdev/Night-Harvest'
+  },
+  {
+    id: 'exp-fitness',
+    year: '2025',
+    role: 'Mobile Application Developer',
+    organization: 'Fitness & Daily Nutrition App',
+    type: 'Mobile App',
+    description: 'Built zero-latency daily calorie and macronutrient logging interfaces, secure Supabase authentication, and responsive cross-platform layouts.',
+    skills: ['TypeScript', 'Mobile UI', 'Cloud Persistence'],
+    link: 'https://github.com/ThordyyDev/fitness-app'
+  },
+  {
+    id: 'exp-web-suite',
+    year: '2024 — 2025',
+    role: 'Frontend Developer & IT Student',
+    organization: 'Academic Web Engineering Labs',
+    type: 'Web & Systems',
+    description: 'Developed responsive web applications, object-oriented software in C++/Python, and relational database schemas with MySQL & PHP.',
+    skills: ['HTML5/CSS3', 'JavaScript', 'Python', 'C++', 'MySQL'],
+    link: 'https://github.com/ThordyyDev/first-year-web-projects'
+  }
+];
+
+export const INITIAL_CERTIFICATIONS: CertificationItem[] = [
+  {
+    id: 'cert-google-ux',
+    title: 'Foundations of User Experience (UX) Design',
+    issuer: 'GOOGLE',
+    issuerType: 'google',
+    date: '2025',
+    verifyUrl: 'https://coursera.org/verify/professional-cert/google-ux',
+    credentialCode: 'UX-GOOG-8491'
+  },
+  {
+    id: 'cert-meta-frontend',
+    title: 'Frontend Developer Specialization',
+    issuer: 'META',
+    issuerType: 'meta',
+    date: '2025',
+    verifyUrl: 'https://coursera.org/verify/professional-cert/meta-frontend',
+    credentialCode: 'META-FE-9921'
+  },
+  {
+    id: 'cert-database-sql',
+    title: 'Relational Database Design & SQL',
+    issuer: 'ORACLE ACADEMY',
+    issuerType: 'oracle',
+    date: '2025',
+    verifyUrl: 'https://academy.oracle.com',
+    credentialCode: 'ORA-SQL-7724'
+  },
+  {
+    id: 'cert-freecodecamp-web',
+    title: 'Responsive Web Design Certification',
+    issuer: 'FREECODECAMP',
+    issuerType: 'freecodecamp',
+    date: '2024',
+    verifyUrl: 'https://freecodecamp.org/certification/thordyydev/responsive-web-design',
+    credentialCode: 'FCC-RWD-3021'
+  }
+];
+
+export const INITIAL_AFFILIATIONS: AffiliationItem[] = [
+  {
+    id: 'affil-gdg',
+    name: 'GDG on Campus',
+    role: 'STUDENT DEVELOPER',
+    tag: 'GDG',
+    link: 'https://developers.google.com/community/gdsc'
+  },
+  {
+    id: 'affil-aap',
+    name: 'AAP',
+    role: 'MEMBER',
+    tag: 'AAP',
+    link: 'https://github.com/ThordyyDev'
+  },
+  {
+    id: 'affil-psia',
+    name: 'PSIA',
+    role: 'MEMBER',
+    tag: 'PSIA',
+    link: 'https://psia.org.ph'
+  },
+  {
+    id: 'affil-appbuilders',
+    name: 'AppBuildersPH',
+    role: 'COMMUNITY DEV',
+    tag: 'PH',
+    link: 'https://github.com/ThordyyDev'
+  }
+];
+
+export const TECH_STACK_PILLS: string[] = [
+  'TypeScript',
+  'React',
+  'Next.js',
+  'Node.js',
+  'Python',
+  'Godot 4',
+  'C#',
+  'C++',
+  'Tailwind CSS',
+  'Supabase',
+  'PostgreSQL',
+  'MySQL',
+  'Django',
+  'Git & GitHub'
 ];
 
 export const PORTFOLIO_PROMPTS: PromptTemplate[] = [

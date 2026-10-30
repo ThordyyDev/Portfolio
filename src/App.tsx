@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ArrowUpRight,
@@ -14,195 +14,52 @@ import {
   Copy,
   SlidersHorizontal,
   X,
-  Home,
+  Menu,
   Briefcase,
-  Cpu,
+  Layers,
+  Award,
+  Users,
   MessageSquare,
-  Quote,
+  FileText,
+  ExternalLink,
+  Sparkles,
+  Terminal,
+  Activity,
+  Code2,
 } from 'lucide-react';
 import {
   INITIAL_PROFILE,
   INITIAL_CASE_STUDIES,
+  INITIAL_EXPERIENCES,
+  INITIAL_CERTIFICATIONS,
+  INITIAL_AFFILIATIONS,
+  TECH_STACK_PILLS,
   SKILL_GROUPS,
   PortfolioProfile,
   CaseStudy,
+  ExperienceItem,
+  CertificationItem,
+  AffiliationItem,
 } from './data/portfolioData';
 import { CaseStudyModal } from './components/CaseStudyModal';
 import { ScrambleText, useScramble } from './components/ScrambleText';
 import { CursorTrailZone } from './components/CursorTrailZone';
 
-interface NavItemData {
-  id: string;
-  label: string;
-  href: string;
-  icon: React.ComponentType<{ className?: string }>;
-}
-
-const NAV_ITEMS: NavItemData[] = [
-  { id: 'home', label: 'Home', href: '#', icon: Home },
-  { id: 'works', label: 'Works', href: '#works', icon: Briefcase },
-  { id: 'tech-stack', label: 'TechStack', href: '#tech-stack', icon: Cpu },
-  { id: 'contact', label: 'Contact', href: '#contact', icon: MessageSquare },
+// Navigation links for the sidebar
+const NAV_SECTIONS = [
+  { id: 'projects', label: 'Projects', href: '#projects', num: '01' },
+  { id: 'experience', label: 'Experience', href: '#experience', num: '02' },
+  { id: 'stack', label: 'Stack', href: '#stack', num: '03' },
+  { id: 'certifications', label: 'Certifications', href: '#certifications', num: '04' },
+  { id: 'affiliations', label: 'Affiliations', href: '#affiliations', num: '05' },
+  { id: 'contact', label: 'Contact', href: '#contact', num: '06' },
 ];
 
-function NavTabItem({
-  item,
-  isActive,
-  isHovered,
-  onMouseEnter,
-  onMouseLeave,
-  onClick,
-}: {
-  item: NavItemData;
-  isActive: boolean;
-  isHovered: boolean;
-  onMouseEnter: () => void;
-  onMouseLeave: () => void;
-  onClick: (e: React.MouseEvent) => void;
-}) {
-  const Icon = item.icon;
-
-  return (
-    <a
-      href={item.href}
-      onClick={onClick}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      className={`relative flex-1 inline-flex items-center justify-center gap-1 sm:gap-2 px-1.5 sm:px-5 py-1.5 sm:py-2 text-[11px] sm:text-sm font-medium rounded-full whitespace-nowrap select-none transition-colors duration-200 overflow-hidden ${
-        isActive
-          ? 'text-black font-semibold'
-          : isHovered
-          ? 'text-white'
-          : 'text-zinc-400'
-      }`}
-    >
-      {/* Active White Pill — Locked on Home */}
-      {isActive && (
-        <motion.div
-          layoutId="nav-active-pill"
-          className="absolute inset-0 bg-white rounded-full shadow-sm"
-          transition={{ type: 'spring', stiffness: 420, damping: 32 }}
-        />
-      )}
-
-      {/* Hover Pill — Smooth Glide */}
-      {isHovered && !isActive && (
-        <motion.div
-          layoutId="nav-hover-pill"
-          className="absolute inset-0 bg-zinc-800/80 rounded-full"
-          transition={{ type: 'spring', stiffness: 420, damping: 32 }}
-        />
-      )}
-
-      <span className="relative z-10 inline-flex items-center gap-1 sm:gap-2 whitespace-nowrap leading-none">
-        <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-        <span className="whitespace-nowrap">{item.label}</span>
-      </span>
-    </a>
-  );
-}
-
-function DisciplineHeader({
-  groupIndex,
-  domain,
-  description,
-}: {
-  groupIndex: string;
-  domain: string;
-  description: string;
-}) {
-  return (
-    <div className="space-y-2 pb-4 border-b border-zinc-800 cursor-default select-none">
-      <span className="text-xs font-mono text-zinc-500 tabular-nums">
-        DISCIPLINE {groupIndex}
-      </span>
-      <h3 className="font-display text-xl font-bold text-white tracking-tight">
-        {domain}
-      </h3>
-      <p className="text-xs text-zinc-400 leading-relaxed">
-        {description}
-      </p>
-    </div>
-  );
-}
-
-function SkillRowItem({
-  skill,
-  isSelected,
-  onSelect,
-}: {
-  skill: { name: string; proficiency: string; years: string };
-  isSelected: boolean;
-  onSelect: () => void;
-}) {
-  const { displayed, trigger } = useScramble(skill.name, { duration: 360, speed: 20 });
-
-  return (
-    <button
-      type="button"
-      onClick={onSelect}
-      onMouseLeave={() => trigger()}
-      className={`w-full py-3 px-2 flex items-center justify-between text-left transition-colors rounded cursor-pointer select-none ${
-        isSelected
-          ? 'bg-white text-black font-medium'
-          : 'hover:bg-zinc-900/80 text-zinc-200'
-      }`}
-    >
-      <span className="text-sm font-medium whitespace-nowrap">
-        {displayed}
-      </span>
-      <div
-        className={`flex items-center gap-2 text-xs font-mono tabular-nums ${
-          isSelected ? 'text-black' : 'text-zinc-400'
-        }`}
-      >
-        <span>{skill.proficiency}</span>
-        <span aria-hidden="true">·</span>
-        <span>{skill.years}</span>
-      </div>
-    </button>
-  );
-}
-
-function PortraitCard({ profile }: { profile: PortfolioProfile }) {
-  const { displayed, trigger } = useScramble(profile.name, { duration: 420, speed: 20 });
-
-  return (
-    <div
-      onMouseEnter={() => trigger()}
-      onMouseLeave={() => trigger()}
-      className="relative w-full max-w-sm sm:max-w-md lg:max-w-none h-[340px] sm:h-[440px] lg:h-full rounded-2xl overflow-hidden border border-zinc-800 bg-[#09090b] flex flex-col justify-between group shadow-2xl cursor-default"
-    >
-      {/* Portrait Image */}
-      <img
-        src={profile.portraitUrl}
-        alt={`${profile.name} portrait`}
-        referrerPolicy="no-referrer"
-        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-      />
-
-      {/* Gradient Scrim */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent pointer-events-none" />
-
-      {/* Clean Bottom Label with Scramble Effect */}
-      <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 flex items-center justify-between gap-2 text-xs text-zinc-300">
-        <span
-          onMouseEnter={(e) => {
-            e.stopPropagation();
-            trigger();
-          }}
-          className="font-mono text-[11px] text-zinc-300 hover:text-white transition-colors truncate tracking-wide"
-        >
-          {displayed}
-        </span>
-        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] font-mono rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 whitespace-nowrap shrink-0">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          Available for Roles
-        </span>
-      </div>
-    </div>
-  );
-}
+const QUICK_LINKS = [
+  { label: 'Resume', href: 'https://github.com/ThordyyDev', icon: FileText },
+  { label: 'GitHub', href: 'https://github.com/ThordyyDev', icon: Github },
+  { label: 'Collabs', href: '#contact', icon: Sparkles },
+];
 
 const INQUIRY_OPTIONS = [
   'Frontend / Web Dev',
@@ -210,111 +67,66 @@ const INQUIRY_OPTIONS = [
   'Internship / Collab',
 ];
 
-function InquiryTypeItem({
-  scope,
-  isActive,
-  isHovered,
-  onMouseEnter,
-  onMouseLeave,
-  onSelect,
-}: {
-  scope: string;
-  isActive: boolean;
-  isHovered: boolean;
-  onMouseEnter: () => void;
-  onMouseLeave: () => void;
-  onSelect: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onSelect}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      className={`relative px-3 py-2.5 text-xs font-medium rounded-lg text-center cursor-pointer select-none transition-colors duration-200 overflow-hidden flex items-center justify-center whitespace-nowrap ${
-        isActive
-          ? 'text-black font-semibold'
-          : isHovered
-          ? 'text-white'
-          : 'text-zinc-400'
-      }`}
-    >
-      {/* Active White Pill with Smooth Spring Physics */}
-      {isActive && (
-        <motion.div
-          layoutId="inquiry-active-pill"
-          className="absolute inset-0 bg-white rounded-lg shadow-sm"
-          transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+// Clean Brand Logos for Certifications
+function CertificationLogo({ type }: { type: CertificationItem['issuerType'] }) {
+  if (type === 'google') {
+    return (
+      <svg className="w-8 h-8" viewBox="0 0 24 24">
+        <path
+          fill="#4285F4"
+          d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
         />
-      )}
-
-      {/* Hover Pill — Smooth Glide */}
-      {isHovered && !isActive && (
-        <motion.div
-          layoutId="inquiry-hover-pill"
-          className="absolute inset-0 bg-zinc-800/80 rounded-lg"
-          transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+        <path
+          fill="#34A853"
+          d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
         />
-      )}
-
-      <span className="relative z-10 block whitespace-nowrap tracking-normal font-medium leading-none">
-        {scope}
-      </span>
-    </button>
-  );
+        <path
+          fill="#FBBC05"
+          d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+        />
+        <path
+          fill="#EA4335"
+          d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+        />
+      </svg>
+    );
+  }
+  if (type === 'meta') {
+    return (
+      <svg className="w-8 h-8" viewBox="0 0 24 24" fill="#0081FB">
+        <path d="M12 2.04c-5.5 0-10 4.49-10 10.02 0 5 3.66 9.15 8.44 9.9v-7H7.9v-2.9h2.54V9.85c0-2.51 1.49-3.89 3.78-3.89 1.09 0 2.23.19 2.23.19v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.45 2.9h-2.33v7a10 10 0 0 0 8.44-9.9c0-5.53-4.5-10.02-10-10.02Z" />
+      </svg>
+    );
+  }
+  if (type === 'oracle') {
+    return (
+      <svg className="w-8 h-8" viewBox="0 0 24 24" fill="#F80000">
+        <path d="M16.42 4.45H7.58C3.4 4.45 0 7.85 0 12.03s3.4 7.58 7.58 7.58h8.84c4.18 0 7.58-3.4 7.58-7.58s-3.4-7.58-7.58-7.58zm-.3 11.45H7.88c-2.13 0-3.87-1.74-3.87-3.87s1.74-3.87 3.87-3.87h8.24c2.13 0 3.87 1.74 3.87 3.87s-1.74 3.87-3.87 3.87z" />
+      </svg>
+    );
+  }
+  if (type === 'freecodecamp') {
+    return (
+      <svg className="w-8 h-8" viewBox="0 0 24 24" fill="#0A0A23">
+        <path
+          fill="#002EAD"
+          d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 14.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5V13h3v3.5zm0-5h-3V7.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5V11.5z"
+        />
+      </svg>
+    );
+  }
+  return <Award className="w-8 h-8 text-white" />;
 }
 
 export default function App() {
   const [profile, setProfile] = useState<PortfolioProfile>(INITIAL_PROFILE);
   const [caseStudies, setCaseStudies] = useState<CaseStudy[]>(INITIAL_CASE_STUDIES);
+  const [activeSection, setActiveSection] = useState('projects');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Synchronize state directly with code changes and clean up old cache
-  useEffect(() => {
-    try {
-      localStorage.clear();
-    } catch {
-      // ignore
-    }
-    setProfile(INITIAL_PROFILE);
-    setCaseStudies(INITIAL_CASE_STUDIES);
-  }, []);
-
-  const [activeNav, setActiveNav] = useState('home');
-  const [hoveredNav, setHoveredNav] = useState<string | null>(null);
-  const [hoveredScope, setHoveredScope] = useState<string | null>(null);
-  const [showScrollTop, setShowScrollTop] = useState(false);
-
-  // Auto-track active navigation tab on scroll & manage scroll-to-top visibility
-  useEffect(() => {
-    const handleScroll = () => {
-      // Show scroll-to-top button only when scrolled down past 350px
-      setShowScrollTop(window.scrollY > 350);
-
-      const scrollPos = window.scrollY + 200;
-      const contactEl = document.getElementById('contact');
-      const techEl = document.getElementById('tech-stack');
-      const worksEl = document.getElementById('works');
-
-      if (contactEl && scrollPos >= contactEl.offsetTop) {
-        setActiveNav('contact');
-      } else if (techEl && scrollPos >= techEl.offsetTop) {
-        setActiveNav('tech-stack');
-      } else if (worksEl && scrollPos >= worksEl.offsetTop) {
-        setActiveNav('works');
-      } else {
-        setActiveNav('home');
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
+  // Filters & Modal
   const [activeCategory, setActiveCategory] = useState<string>('All');
-  const [activeSkillFilter, setActiveSkillFilter] = useState<string | null>(
-    null
-  );
+  const [activeSkillFilter, setActiveSkillFilter] = useState<string | null>(null);
   const [selectedStudy, setSelectedStudy] = useState<CaseStudy | null>(null);
 
   // Contact form state
@@ -324,6 +136,32 @@ export default function App() {
   const [contactMessage, setContactMessage] = useState('');
   const [contactSubmitted, setContactSubmitted] = useState(false);
   const [emailCopied, setEmailCopied] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  const { displayed: scrambledName, trigger: triggerNameScramble } = useScramble(
+    'Jhuly Godinez III',
+    { duration: 400, speed: 18 }
+  );
+
+  // Sync scroll position with active sidebar section
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 400);
+
+      const scrollPos = window.scrollY + 250;
+      for (const sec of [...NAV_SECTIONS].reverse()) {
+        const el = document.getElementById(sec.id);
+        if (el && scrollPos >= el.offsetTop) {
+          setActiveSection(sec.id);
+          break;
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleUpdateStudyImage = (studyId: string, newImageUrl: string) => {
     setCaseStudies((prev) =>
@@ -334,19 +172,15 @@ export default function App() {
     );
   };
 
-  const handleAddCaseStudy = (newStudy: CaseStudy) => {
-    setCaseStudies((prev) => [newStudy, ...prev]);
-  };
-
   const handleSelectSkill = (skillName: string) => {
     if (activeSkillFilter === skillName) {
       setActiveSkillFilter(null);
     } else {
       setActiveSkillFilter(skillName);
       setActiveCategory('All');
-      const worksEl = document.getElementById('works');
-      if (worksEl) {
-        worksEl.scrollIntoView({ behavior: 'smooth' });
+      const projectsEl = document.getElementById('projects');
+      if (projectsEl) {
+        projectsEl.scrollIntoView({ behavior: 'smooth' });
       }
     }
   };
@@ -354,7 +188,7 @@ export default function App() {
   const handleCopyEmail = () => {
     navigator.clipboard.writeText(profile.email);
     setEmailCopied(true);
-    setTimeout(() => setEmailCopied(false), 1800);
+    setTimeout(() => setEmailCopied(false), 2000);
   };
 
   const handleContactSubmit = (e: React.FormEvent) => {
@@ -362,30 +196,19 @@ export default function App() {
     if (!contactName.trim() || !contactEmail.trim() || !contactMessage.trim())
       return;
 
-    const subject = encodeURIComponent(
-      `${contactScope} — Inquiry from ${contactName}`
-    );
+    const subject = encodeURIComponent(`${contactScope} — Inquiry from ${contactName}`);
     const body = encodeURIComponent(
       `Name: ${contactName}\nEmail: ${contactEmail}\nInquiry Type: ${contactScope}\n\n${contactMessage}`
     );
-    const mailtoUrl = `mailto:jhulygodinezedu@gmail.com?subject=${subject}&body=${body}`;
 
-    // Open email client with pre-filled fields
-    window.open(mailtoUrl, '_blank');
+    // Directly open Gmail compose in a new tab without external prompts
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=jhulygodinezedu@gmail.com&su=${subject}&body=${body}`;
+    window.open(gmailUrl, '_blank');
 
-    // Show success state
     setContactSubmitted(true);
   };
 
-  // Portrait CSS filter classes
-  const portraitFilterClass = {
-    'leica-mono': 'grayscale contrast-125 brightness-95',
-    'silver-gelatin': 'grayscale contrast-110 brightness-105',
-    'high-contrast': 'grayscale contrast-150 brightness-90',
-    natural: '',
-  }[profile.portraitFilter];
-
-  // Filtered Case Studies
+  // Filtered Projects
   const filteredStudies = caseStudies.filter((study) => {
     const matchesCategory =
       activeCategory === 'All' || study.category === activeCategory;
@@ -418,574 +241,770 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen grid-bg text-[#FAFAFA] font-sans selection:bg-white selection:text-black overflow-x-hidden">
-      {/* NAV BAR — Extended Harmonious Floating Dock */}
-      <header className="sticky top-0 z-40 bg-[#050505]/85 backdrop-blur-md border-b border-zinc-800/60 py-2.5 sm:py-3.5 px-3 sm:px-6">
-        <div className="max-w-[1200px] mx-auto flex items-center justify-center">
-          <nav
-            aria-label="Primary Navigation"
-            onMouseLeave={() => setHoveredNav(null)}
-            className="w-full max-w-[620px] flex items-center justify-between p-1.5 rounded-full bg-zinc-950/85 border border-zinc-800/90 backdrop-blur-xl shadow-[0_10px_35px_-5px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,255,255,0.04)]"
-          >
-            {NAV_ITEMS.map((item) => (
-              <NavTabItem
-                key={item.id}
-                item={item}
-                isActive={item.id === 'home'}
-                isHovered={hoveredNav === item.id}
-                onMouseEnter={() => setHoveredNav(item.id)}
-                onMouseLeave={() => {}}
-                onClick={(e) => {
-                  if (item.href === '#') {
-                    e.preventDefault();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }
-                }}
-              />
-            ))}
-          </nav>
-        </div>
+    <div className="min-h-screen bg-[#050505] text-[#FAFAFA] font-sans selection:bg-white selection:text-black">
+      {/* ========================================================= */}
+      {/* MOBILE STICKY HEADER                                      */}
+      {/* ========================================================= */}
+      <header className="md:hidden sticky top-0 z-40 bg-[#050505]/90 backdrop-blur-md border-b border-zinc-900 px-4 py-3.5 flex items-center justify-between">
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className="font-mono text-sm font-semibold tracking-tight text-white hover:text-zinc-300 transition-colors"
+        >
+          Jhuly Godinez III
+        </a>
+        <button
+          type="button"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Toggle navigation menu"
+          className="p-1.5 rounded-lg border border-zinc-800 text-zinc-300 hover:text-white hover:border-zinc-700 bg-zinc-950 transition-colors"
+        >
+          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
       </header>
 
-      <main>
-        {/* SPLIT-SCREEN HERO & FULL-WIDTH METRICS STRIP */}
-        <section className="pt-8 pb-14 sm:pt-16 sm:pb-24 border-b border-zinc-800/80">
-          <div className="max-w-[1200px] mx-auto px-4 sm:px-6 space-y-10 sm:space-y-16">
-            {/* 2-Column Split with items-stretch */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
-              {/* Left Column: Typographic Hierarchy */}
-              <motion.div
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="lg:col-span-7 flex flex-col justify-between space-y-6 sm:space-y-8 py-1 sm:py-2"
-              >
-                <div className="space-y-4 sm:space-y-6">
-                  {/* Clean Status & Role Kicker — Mobile Adaptive */}
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-2.5 text-xs font-mono">
-                    <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-300 w-fit">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      Available for Projects & Internships
-                    </span>
-                    <div className="flex items-center gap-2 text-zinc-400 pl-0.5 sm:pl-0 text-[11px] sm:text-xs">
-                      <span>Cebu, PH</span>
-                      <span className="text-zinc-600" aria-hidden="true">·</span>
-                      <span>Full-Stack, Mobile & Game Dev</span>
-                    </div>
-                  </div>
-
-                  {/* Display Headline with Relaxed Leading & Harmonic Wrapping */}
-                  <h1 className="font-display text-2xl sm:text-4xl lg:text-[3.2rem] font-bold tracking-tight text-white leading-[1.22] sm:leading-[1.18] [text-wrap:balance]">
-                    Hi, I&apos;m ThordyyDev{' '}
-                    <span className="text-zinc-400 font-normal">
-                      — Building practical software with{' '}
-                    </span>
-                    <span className="font-serif italic font-normal text-zinc-100">
-                      purpose and curiosity.
-                    </span>
-                  </h1>
-
-                  {/* Lead Bio Prose */}
-                  <p className="text-sm sm:text-[1.05rem] text-zinc-300 leading-relaxed max-w-[56ch]">
-                    {profile.leadBio}
-                  </p>
-                </div>
-
-                {/* Editorial Philosophy Card & Primary CTAs */}
-                <div className="space-y-5 sm:space-y-6 pt-5 sm:pt-6 border-t border-zinc-800/80">
-                  {/* High-Legibility Philosophy Callout Card */}
-                  <div className="p-3.5 sm:p-4.5 rounded-xl bg-zinc-900/50 border border-zinc-800/80 backdrop-blur-sm flex items-start gap-3 shadow-sm">
-                    <Quote className="w-4 h-4 text-zinc-400 shrink-0 mt-0.5" />
-                    <div className="space-y-1">
-                      <p className="text-xs sm:text-[0.925rem] text-zinc-200 font-sans leading-relaxed font-normal">
-                        “{profile.editorialPhilosophy}”
-                      </p>
-                      <span className="text-[10px] sm:text-[11px] font-mono text-zinc-400 block tracking-wider uppercase">
-                        Philosophy &amp; Approach
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Action Buttons — Full Width Stack on Mobile, Inline on Desktop */}
-                  <div className="grid grid-cols-1 sm:flex sm:items-center gap-2.5 sm:gap-3">
-                    <a
-                      href="#works"
-                      className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-xs font-semibold text-black bg-white rounded-lg hover:bg-zinc-200 transition-all shadow-sm whitespace-nowrap cursor-pointer"
-                    >
-                      Explore Works
-                      <ArrowUpRight className="w-4 h-4" />
-                    </a>
-
-                    <a
-                      href={profile.githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-xs font-medium text-white bg-zinc-900 border border-zinc-800 rounded-lg hover:bg-zinc-800 hover:border-zinc-700 transition-all whitespace-nowrap"
-                    >
-                      <Github className="w-4 h-4" />
-                      GitHub Profile
-                    </a>
-
-                    <a
-                      href="#contact"
-                      className="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-medium text-zinc-300 border border-zinc-800 rounded-lg hover:bg-zinc-900 hover:text-white transition-all whitespace-nowrap"
-                    >
-                      <Mail className="w-4 h-4" />
-                      Contact Me
-                    </a>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Right Column: Clean Author Portrait — Controlled Height on Mobile */}
-              <motion.div
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.6,
-                  delay: 0.08,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
-                className="lg:col-span-5 flex flex-col items-center justify-center"
-              >
-                <PortraitCard profile={profile} />
-              </motion.div>
-            </div>
-
-            {/* Full-Width Quantitative KPI Row — 2x2 Grid on Mobile, 4 Columns on Desktop */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 lg:gap-8 pt-8 sm:pt-12 border-t border-zinc-800/80">
-              {profile.metrics.map((m, idx) => (
-                <div
-                  key={idx}
-                  className="p-3.5 sm:p-0 rounded-xl bg-zinc-900/40 sm:bg-transparent border border-zinc-800/60 sm:border-0 space-y-1"
+      {/* MOBILE SLIDE-OUT DRAWER */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="md:hidden fixed inset-x-0 top-[53px] z-30 bg-[#050505] border-b border-zinc-800/90 p-5 space-y-6 shadow-2xl"
+          >
+            <div className="space-y-1">
+              {NAV_SECTIONS.map((sec) => (
+                <a
+                  key={sec.id}
+                  href={sec.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`block px-3 py-2 text-sm font-mono rounded-lg transition-colors ${
+                    activeSection === sec.id
+                      ? 'bg-white text-black font-semibold'
+                      : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
+                  }`}
                 >
-                  <div className="font-mono text-2xl sm:text-3xl md:text-4xl font-semibold text-white tabular-nums tracking-tight">
-                    {m.value}
-                  </div>
-                  <div className="text-xs sm:text-sm font-medium text-zinc-200 line-clamp-1">
-                    {m.label}
-                  </div>
-                  <div className="text-[11px] sm:text-xs text-zinc-500 font-mono line-clamp-1">
-                    {m.timeframe}
-                  </div>
-                </div>
+                  <span className="text-zinc-500 mr-2">{sec.num}</span>
+                  {sec.label}
+                </a>
               ))}
             </div>
-          </div>
-        </section>
 
-        {/* SUBTLE ANIMATED MARQUEE SECTION DIVIDER */}
-        <div
-          aria-hidden="true"
-          className="py-3.5 bg-[#09090b] border-b border-zinc-800/80 overflow-hidden select-none"
-        >
-          <div className="animate-marquee flex items-center gap-10 text-xs font-mono text-zinc-400 tracking-widest uppercase">
-            <span>Web Development</span>
-            <span>·</span>
-            <span>Mobile Development</span>
-            <span>·</span>
-            <span>Game Development</span>
-            <span>·</span>
-            <span>TypeScript</span>
-            <span>·</span>
-            <span>PostgreSQL</span>
-            <span>·</span>
-            <span>Supabase</span>
-            <span>·</span>
-            <span>Python & Django</span>
-            <span>·</span>
-            <span>PHP & MySQL</span>
-            <span>·</span>
-            <span>C++ & C#</span>
-            <span>·</span>
-            <span>OOP Architecture</span>
-            <span>·</span>
-            <span>Responsive Web Design</span>
-            <span>·</span>
-            <span>Git & GitHub Workflow</span>
-            <span>·</span>
-            <span>Web Development</span>
-            <span>·</span>
-            <span>Mobile Development</span>
-            <span>·</span>
-            <span>Game Development</span>
-            <span>·</span>
-            <span>TypeScript</span>
-            <span>·</span>
-            <span>PostgreSQL</span>
-            <span>·</span>
-            <span>Supabase</span>
-            <span>·</span>
-            <span>Python & Django</span>
-            <span>·</span>
-            <span>PHP & MySQL</span>
-            <span>·</span>
-            <span>C++ & C#</span>
-            <span>·</span>
-            <span>OOP Architecture</span>
-            <span>·</span>
-            <span>Responsive Web Design</span>
-            <span>·</span>
-            <span>Git & GitHub Workflow</span>
-          </div>
-        </div>
+            <div className="pt-4 border-t border-zinc-900 flex items-center justify-between text-xs font-mono text-zinc-400">
+              <a
+                href={`mailto:${profile.email}`}
+                className="hover:text-white transition-colors"
+              >
+                {profile.email}
+              </a>
+              <a
+                href={profile.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white transition-colors"
+              >
+                @ThordyyDev
+              </a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-        {/* 01. SELECTED WORKS & DETAILED PROJECT CASE STUDIES (DYNAMIC BENTO GRID) */}
-        <CursorTrailZone>
-        <section
-          id="works"
-          className="py-24 border-b border-zinc-800/80 scroll-mt-20"
-        >
-          <div className="max-w-[1200px] mx-auto px-6 space-y-12">
-            {/* Section Header & Interactive Filter Controls */}
-            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-10 border-b border-zinc-800/80">
-              <div className="space-y-3 max-w-2xl">
-                <p className="text-xs font-mono text-zinc-400 tracking-wider">
-                  01. SELECTED WORKS & PROJECTS
-                </p>
-                <h2 className="font-display text-3xl md:text-4xl font-bold tracking-tight text-white [text-wrap:balance]">
-                  Featured Projects &{' '}
-                  <span className="font-serif italic font-normal text-zinc-200">
-                    Interactive Case Studies.
-                  </span>
-                </h2>
-                <p className="text-sm md:text-base text-zinc-400 leading-relaxed">
-                  Practical software implementations across Web Development, Mobile Apps, Game Engines, and Database Systems.
-                </p>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-2">
-                {categories.map((cat) => (
-                  <button
-                    key={cat}
-                    type="button"
-                    onClick={() => setActiveCategory(cat)}
-                    className={`px-3.5 py-1.5 text-xs font-mono font-medium rounded-lg transition-all whitespace-nowrap cursor-pointer border ${
-                      activeCategory === cat
-                        ? 'bg-white text-black border-white shadow-sm font-semibold'
-                        : 'bg-zinc-900/80 text-zinc-400 border-zinc-800/90 hover:text-white hover:border-zinc-700'
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                ))}
-              </div>
+      <div className="flex min-h-screen">
+        {/* ========================================================= */}
+        {/* DESKTOP FIXED LEFT SIDEBAR (BRYL LIM INSPIRATION)          */}
+        {/* ========================================================= */}
+        <aside className="hidden md:flex flex-col justify-between w-64 lg:w-72 fixed inset-y-0 left-0 bg-[#050505] border-r border-zinc-900/90 z-30 p-6 overflow-y-auto select-none">
+          {/* Top Brand & Quick Links */}
+          <div className="space-y-8">
+            {/* Author Name Brand Header */}
+            <div>
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  triggerNameScramble();
+                }}
+                onMouseEnter={() => triggerNameScramble()}
+                className="block font-mono text-base font-semibold tracking-tight text-white hover:text-zinc-300 transition-colors"
+              >
+                {scrambledName}
+              </a>
+              <span className="text-[11px] font-mono text-zinc-500 block mt-0.5">
+                Full-Stack &amp; Mobile Engineer
+              </span>
             </div>
 
-            {/* Active Skill Filter Notice */}
-            {activeSkillFilter && (
-              <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-700 text-xs">
-                <div className="flex items-center gap-2 text-zinc-200">
-                  <SlidersHorizontal className="w-3.5 h-3.5 text-zinc-400" />
-                  <span>
-                    Filtering works by technical capability:{' '}
-                    <strong className="text-white font-mono">
-                      {activeSkillFilter}
-                    </strong>
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setActiveSkillFilter(null)}
-                  className="inline-flex items-center gap-1 text-zinc-400 hover:text-white cursor-pointer"
-                >
-                  <X className="w-3.5 h-3.5" />
-                  Clear Filter
-                </button>
-              </div>
-            )}
-
-            {/* Dynamic Bento Box Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {filteredStudies.map((study, idx) => {
-                const isWide = study.bentoSpan === 'wide';
+            {/* Quick Utility Links (Shop/Blog/Collabs in inspiration) */}
+            <div className="space-y-1.5 text-xs font-mono">
+              {QUICK_LINKS.map((link) => {
+                const Icon = link.icon;
                 return (
-                  <motion.article
-                    key={study.id}
-                    initial={{ opacity: 0, y: 16 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: '-40px' }}
-                    whileHover={{ y: -4, transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
-                    whileTap={{ scale: 0.985 }}
-                    transition={{
-                      duration: 0.45,
-                      delay: idx * 0.05,
-                      ease: [0.16, 1, 0.3, 1],
-                    }}
-                    onClick={() => setSelectedStudy(study)}
-                    className={`group cursor-pointer rounded-2xl bg-[#09090b] border border-zinc-800/90 hover:border-zinc-500 transition-colors overflow-hidden flex flex-col justify-between ${
-                      isWide ? 'md:col-span-2' : 'md:col-span-1'
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    target={link.href.startsWith('http') ? '_blank' : undefined}
+                    rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                    className="flex items-center gap-2.5 px-2 py-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-900/60 transition-colors"
+                  >
+                    <Icon className="w-3.5 h-3.5 shrink-0 text-zinc-500" />
+                    <span>{link.label}</span>
+                  </a>
+                );
+              })}
+            </div>
+
+            {/* Main Navigation Sections */}
+            <div className="pt-4 border-t border-zinc-900/80 space-y-1">
+              <span className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest block px-2 mb-2">
+                Navigation
+              </span>
+              {NAV_SECTIONS.map((sec) => {
+                const isActive = activeSection === sec.id;
+                return (
+                  <a
+                    key={sec.id}
+                    href={sec.href}
+                    className={`group flex items-center justify-between px-2.5 py-1.5 text-xs font-mono rounded-md transition-all ${
+                      isActive
+                        ? 'text-white font-medium bg-zinc-900/90'
+                        : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40'
                     }`}
                   >
-                    {/* Media Showcase Container */}
-                    <div className="relative aspect-video overflow-hidden bg-[#050505] border-b border-zinc-800/80">
-                      <img
-                        src={resolveImgSrc(study.imageUrl)}
-                        alt={study.title}
-                        referrerPolicy="no-referrer"
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
-
-                      <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between text-xs font-mono text-zinc-300 tabular-nums">
-                        <span>
-                          {study.index} · {study.category}
-                        </span>
-                        <span className="inline-flex items-center gap-1 text-white group-hover:translate-x-0.5 transition-transform">
-                          Read Case Study
-                          <ArrowUpRight className="w-3.5 h-3.5" />
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Editorial Body & Aligned Metadata */}
-                    <div className="p-6 flex-1 flex flex-col justify-between space-y-6">
-                      <div className="space-y-3">
-                        {/* Top Metadata Row: Status Badge + Year / Read time */}
-                        <div className="flex items-center justify-between gap-2 text-xs font-mono min-h-[24px]">
-                          <span
-                            className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium border ${
-                              study.status === 'Completed'
-                                ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/25'
-                                : 'bg-amber-500/10 text-amber-300 border-amber-500/25'
-                            }`}
-                          >
-                            <span
-                              className={`w-1.5 h-1.5 rounded-full ${
-                                study.status === 'Completed'
-                                  ? 'bg-emerald-400'
-                                  : 'bg-amber-400 animate-pulse'
-                              }`}
-                            />
-                            {study.status}
-                          </span>
-
-                          <div className="flex items-center gap-2 text-zinc-500 text-xs tabular-nums">
-                            <span>{study.year}</span>
-                            <span className="text-zinc-700">·</span>
-                            <span>{study.readTime}</span>
-                          </div>
-                        </div>
-
-                        <h3 className="font-display text-xl md:text-2xl font-bold text-white tracking-tight group-hover:text-zinc-200 transition-colors line-clamp-1">
-                          {study.title}
-                        </h3>
-
-                        <p className="text-sm text-zinc-400 leading-relaxed line-clamp-2 h-10">
-                          {study.summary}
-                        </p>
-                      </div>
-
-                      {/* Unboxed Skill Taxonomy Line - Strict Single-Line Alignment */}
-                      <div className="pt-4 border-t border-zinc-800/80 flex items-center justify-between gap-3 text-xs font-mono text-zinc-400">
-                        <div className="flex items-center gap-1.5 overflow-hidden text-ellipsis whitespace-nowrap min-w-0">
-                          {study.skills.slice(0, 3).map((skill, sIdx) => (
-                            <React.Fragment key={skill}>
-                              <span className="shrink-0">{skill}</span>
-                              {sIdx < Math.min(study.skills.length, 3) - 1 && (
-                                <span
-                                  aria-hidden="true"
-                                  className="text-zinc-600 shrink-0"
-                                >
-                                  ·
-                                </span>
-                              )}
-                            </React.Fragment>
-                          ))}
-                          {study.skills.length > 3 && (
-                            <span className="text-zinc-500 text-[11px] shrink-0 font-medium">
-                              +{study.skills.length - 3}
-                            </span>
-                          )}
-                        </div>
-
-                        <a
-                          href={study.githubUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(e) => e.stopPropagation()}
-                          aria-label={`GitHub repository for ${study.title}`}
-                          className="text-zinc-400 hover:text-white transition-colors shrink-0 p-1 hover:bg-zinc-800 rounded-md"
-                        >
-                          <Github className="w-4 h-4" />
-                        </a>
-                      </div>
-                    </div>
-                  </motion.article>
+                    <span className="flex items-center gap-2">
+                      <span
+                        className={`text-[10px] ${
+                          isActive ? 'text-white' : 'text-zinc-600'
+                        }`}
+                      >
+                        {sec.num}
+                      </span>
+                      <span>{sec.label}</span>
+                    </span>
+                    {isActive && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-white" />
+                    )}
+                  </a>
                 );
               })}
             </div>
           </div>
-        </section>
-        </CursorTrailZone>
 
-        {/* 02. TECHNICAL STACK & SKILL MATRIX */}
-        <section
-          id="tech-stack"
-          className="py-24 border-b border-zinc-800/80 scroll-mt-20"
-        >
-          <div className="max-w-[1200px] mx-auto px-6 space-y-14">
-            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-10 border-b border-zinc-800/80">
-              <div className="space-y-3 max-w-2xl">
-                <p className="text-xs font-mono text-zinc-400 tracking-wider">
-                  02. TECH STACK & CAPABILITIES
-                </p>
-                <h2 className="font-display text-3xl md:text-4xl font-bold tracking-tight text-white [text-wrap:balance]">
-                  Technical Skills &{' '}
-                  <span className="font-serif italic font-normal text-zinc-200">
-                    Interactive Stack Matrix.
-                  </span>
-                </h2>
-                <p className="text-sm md:text-base text-zinc-400 leading-relaxed">
-                  Select any technical skill below to filter projects and case studies by that exact capability.
-                </p>
-              </div>
-
-              {activeSkillFilter && (
-                <button
-                  type="button"
-                  onClick={() => setActiveSkillFilter(null)}
-                  className="px-3.5 py-2 text-xs font-mono text-black bg-white rounded-lg hover:bg-zinc-200 transition-colors whitespace-nowrap shrink-0 cursor-pointer self-start lg:self-auto"
-                >
-                  Active Filter: {activeSkillFilter} (Reset)
-                </button>
-              )}
+          {/* Bottom Sidebar Status & Contact */}
+          <div className="pt-8 border-t border-zinc-900/80 space-y-4 text-xs font-mono">
+            {/* Quick Action Pills */}
+            <div className="space-y-1 text-[11px] text-zinc-400">
+              <a
+                href="#contact"
+                className="flex items-center justify-between px-2 py-1.5 rounded-md bg-zinc-950 border border-zinc-900 hover:border-zinc-700 hover:text-white transition-colors"
+              >
+                <span>Ask anything</span>
+                <kbd className="px-1.5 py-0.5 rounded bg-zinc-900 text-zinc-500 text-[9px] border border-zinc-800">
+                  ALT + K
+                </kbd>
+              </a>
+              <button
+                type="button"
+                onClick={handleCopyEmail}
+                className="w-full flex items-center justify-between px-2 py-1.5 rounded-md bg-zinc-950 border border-zinc-900 hover:border-zinc-700 hover:text-white transition-colors cursor-pointer text-left"
+              >
+                <span>{emailCopied ? 'Email Copied!' : 'Copy Email'}</span>
+                <kbd className="px-1.5 py-0.5 rounded bg-zinc-900 text-zinc-500 text-[9px] border border-zinc-800">
+                  {emailCopied ? '✓' : 'ALT + C'}
+                </kbd>
+              </button>
             </div>
 
-            {/* 3-Column Monograph Skill Matrix */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-              {SKILL_GROUPS.map((group) => (
-                <div key={group.index} className="space-y-6">
-                  <DisciplineHeader
-                    groupIndex={group.index}
-                    domain={group.domain}
-                    description={group.description}
-                  />
+            {/* Live Status indicator */}
+            <div className="flex items-center gap-2 px-2 text-zinc-400 text-[11px]">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Available for 2026 roles</span>
+            </div>
 
-                  {/* Tabular Skill Rows with Text Scramble on Mouse Leave */}
-                  <div className="divide-y divide-zinc-800/70">
-                    {group.skills.map((skill) => (
-                      <SkillRowItem
-                        key={skill.name}
-                        skill={skill}
-                        isSelected={activeSkillFilter === skill.name}
-                        onSelect={() => handleSelectSkill(skill.name)}
-                      />
-                    ))}
-                  </div>
-                </div>
-              ))}
+            {/* Direct Contact Blurb */}
+            <div className="px-2 pt-2 border-t border-zinc-900/70 text-[11px] text-zinc-500 space-y-1">
+              <p>For work, collabs &amp; inquiries:</p>
+              <a
+                href={`mailto:${profile.email}`}
+                className="block text-zinc-300 hover:text-white truncate transition-colors"
+              >
+                ✉ {profile.email}
+              </a>
             </div>
           </div>
-        </section>
+        </aside>
 
-        {/* 03. DIRECT CONTACT */}
-        <section id="contact" className="py-24 scroll-mt-20">
-          <div className="max-w-[1200px] mx-auto px-6">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-              {/* Left Contact Column */}
-              <div className="lg:col-span-6 space-y-8">
-                <div className="space-y-3">
-                  <p className="text-xs font-mono text-zinc-400 tracking-wider">
-                    03. CONTACT & GET IN TOUCH
-                  </p>
-                  <h2 className="font-display text-3xl md:text-5xl font-bold tracking-tight text-white [text-wrap:balance]">
-                    Let's Build Something{' '}
-                    <span className="font-serif italic font-normal text-zinc-200">
-                      Together.
-                    </span>
-                  </h2>
-                  <p className="text-sm md:text-base text-zinc-400 leading-relaxed max-w-xl">
-                    Available for internships, freelance web development, collaborative projects, or general inquiries.
-                  </p>
+        {/* ========================================================= */}
+        {/* MAIN CONTENT CANVAS (FOCUSED & REFINED)                    */}
+        {/* ========================================================= */}
+        <main className="flex-1 md:ml-64 lg:ml-72 min-w-0">
+          <div className="max-w-4xl mx-auto px-5 sm:px-8 lg:px-12 py-10 sm:py-16 space-y-24">
+            {/* ===================================================== */}
+            {/* HERO INTRODUCTION (IMAGE 1 BRYL LIM STYLE)           */}
+            {/* ===================================================== */}
+            <section id="hero" className="space-y-10 pt-2 sm:pt-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-8 sm:gap-10">
+                {/* Dithered / Monochrome Author Portrait */}
+                <div className="relative group shrink-0">
+                  <div className="w-36 h-36 sm:w-44 sm:h-44 rounded-2xl overflow-hidden border border-zinc-800 bg-zinc-950 shadow-2xl relative">
+                    <img
+                      src={resolveImgSrc(profile.portraitUrl)}
+                      alt={profile.name}
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover grayscale contrast-125 brightness-95 transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+                  </div>
+                  <span className="absolute -bottom-2 -right-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-mono text-[10px]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    Online
+                  </span>
                 </div>
 
-                {/* Direct Coordinates */}
-                <div className="space-y-4 pt-4 border-t border-zinc-800/80">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-3 border-b border-zinc-800/60">
-                    <span className="text-xs font-mono text-zinc-400">
-                      ELECTRONIC MAIL
-                    </span>
-                    <div className="flex items-center gap-3">
-                      <a
-                        href={`mailto:${profile.email}`}
-                        className="text-sm font-mono text-white hover:underline"
-                      >
-                        {profile.email}
-                      </a>
-                      <button
-                        type="button"
-                        onClick={handleCopyEmail}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-mono text-zinc-300 border border-zinc-800 rounded hover:bg-zinc-900 hover:text-white transition-colors cursor-pointer"
-                      >
-                        {emailCopied ? (
-                          <>
-                            <Check className="w-3 h-3" />
-                            Copied
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="w-3 h-3" />
-                            Copy
-                          </>
-                        )}
-                      </button>
-                    </div>
+                {/* Typography and Bio */}
+                <div className="space-y-4 max-w-xl">
+                  <div>
+                    <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-white">
+                      {profile.name}
+                    </h1>
+                    <p className="font-mono text-xs sm:text-sm text-zinc-400 mt-1">
+                      IT Student · Full-Stack, Mobile &amp; Game Developer
+                    </p>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-3 border-b border-zinc-800/60">
-                    <span className="text-xs font-mono text-zinc-400">
-                      GITHUB PROFILE
-                    </span>
+                  <p className="text-sm sm:text-base text-zinc-300 leading-relaxed font-normal">
+                    I build modern web &amp; mobile applications, game engines, and cloud backends. Focused on clean architecture and practical tools.
+                  </p>
+
+                  <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed font-normal">
+                    Right now I'm building cool new stuff every day. I love turning rough ideas into things people actually use.
+                  </p>
+
+                  {/* Clean Links Row */}
+                  <div className="flex flex-wrap items-center gap-3 pt-1 text-xs font-mono">
                     <a
                       href={profile.githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-sm font-mono text-white hover:underline"
+                      className="text-zinc-400 hover:text-white transition-colors inline-flex items-center gap-1"
                     >
-                      {profile.githubUrl.replace(/^https?:\/\//, '')}
-                      <ArrowUpRight className="w-3.5 h-3.5" />
+                      github <ArrowUpRight className="w-3 h-3" />
                     </a>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-3 border-b border-zinc-800/60">
-                    <span className="text-xs font-mono text-zinc-400">
-                      LOCATION & TIMEZONE
-                    </span>
-                    <span className="text-sm font-mono text-zinc-200">
-                      {profile.location} (UTC+8)
-                    </span>
+                    <span className="text-zinc-700">/</span>
+                    <a
+                      href={profile.linkedinUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-zinc-400 hover:text-white transition-colors inline-flex items-center gap-1"
+                    >
+                      linkedin <ArrowUpRight className="w-3 h-3" />
+                    </a>
+                    <span className="text-zinc-700">/</span>
+                    <a
+                      href={`mailto:${profile.email}`}
+                      className="text-zinc-400 hover:text-white transition-colors inline-flex items-center gap-1"
+                    >
+                      email <ArrowUpRight className="w-3 h-3" />
+                    </a>
+                    <span className="text-zinc-700">/</span>
+                    <a
+                      href="#contact"
+                      className="text-zinc-400 hover:text-white transition-colors inline-flex items-center gap-1"
+                    >
+                      inquiries <ArrowUpRight className="w-3 h-3" />
+                    </a>
                   </div>
                 </div>
               </div>
 
-              {/* Right Contact Dispatch Form */}
-              <div className="lg:col-span-6 p-6 md:p-8 rounded-2xl bg-[#09090b] border border-zinc-800">
+              {/* Highlights & Quantitative KPI Bar (Image 1 Style) */}
+              <div className="space-y-4 pt-4 border-t border-zinc-900/90">
+                {/* Affiliations Banner Strip */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-900/80 flex items-center gap-3">
+                    <Terminal className="w-4 h-4 text-zinc-400 shrink-0" />
+                    <div className="min-w-0">
+                      <div className="text-xs font-semibold text-white truncate">
+                        GDG on Campus
+                      </div>
+                      <div className="text-[10px] font-mono text-zinc-500 uppercase">
+                        Student Developer
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-900/80 flex items-center gap-3">
+                    <Users className="w-4 h-4 text-zinc-400 shrink-0" />
+                    <div className="min-w-0">
+                      <div className="text-xs font-semibold text-white truncate">
+                        PSIA &amp; AAP
+                      </div>
+                      <div className="text-[10px] font-mono text-zinc-500 uppercase">
+                        Active Member
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-900/80 flex items-center gap-3">
+                    <Github className="w-4 h-4 text-zinc-400 shrink-0" />
+                    <div className="min-w-0">
+                      <div className="text-xs font-semibold text-white truncate">
+                        Open Source
+                      </div>
+                      <div className="text-[10px] font-mono text-zinc-500 uppercase">
+                        GitHub Campus
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Big Metric Counters */}
+                <div className="grid grid-cols-3 gap-4 pt-2">
+                  <div className="space-y-1">
+                    <div className="font-mono text-2xl sm:text-3xl font-semibold text-white tracking-tight flex items-center gap-1">
+                      <span>3+ yrs</span>
+                      <ArrowUpRight className="w-4 h-4 text-zinc-600" />
+                    </div>
+                    <div className="text-[11px] font-mono text-zinc-500 uppercase tracking-wider">
+                      Shipping &amp; Coding
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="font-mono text-2xl sm:text-3xl font-semibold text-white tracking-tight flex items-center gap-1">
+                      <span>6+</span>
+                      <ArrowUpRight className="w-4 h-4 text-zinc-600" />
+                    </div>
+                    <div className="text-[11px] font-mono text-zinc-500 uppercase tracking-wider">
+                      Projects &amp; Repos
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="font-mono text-2xl sm:text-3xl font-semibold text-white tracking-tight flex items-center gap-1">
+                      <span>10+</span>
+                      <ArrowUpRight className="w-4 h-4 text-zinc-600" />
+                    </div>
+                    <div className="text-[11px] font-mono text-zinc-500 uppercase tracking-wider">
+                      Core Technologies
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* ===================================================== */}
+            {/* 01 — PROJECTS SECTION (IMAGE 2 STYLE)                 */}
+            {/* ===================================================== */}
+            <CursorTrailZone>
+              <section id="projects" className="space-y-8 scroll-mt-12">
+                {/* Section Header */}
+                <div className="flex items-center justify-between pb-3 border-b border-zinc-900">
+                  <div className="flex items-center gap-3">
+                    <span className="font-mono text-xs text-zinc-500">01 —</span>
+                    <h2 className="font-mono text-xs font-bold text-white uppercase tracking-wider">
+                      Projects
+                    </h2>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {/* Category Filter Pills */}
+                    <div className="hidden sm:flex items-center gap-1.5">
+                      {categories.map((cat) => (
+                        <button
+                          key={cat}
+                          type="button"
+                          onClick={() => setActiveCategory(cat)}
+                          className={`px-2.5 py-1 text-[11px] font-mono rounded-md transition-colors cursor-pointer ${
+                            activeCategory === cat
+                              ? 'bg-white text-black font-semibold'
+                              : 'text-zinc-400 hover:text-white bg-zinc-950 border border-zinc-900'
+                          }`}
+                        >
+                          {cat}
+                        </button>
+                      ))}
+                    </div>
+                    <a
+                      href={profile.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-mono text-xs text-zinc-400 hover:text-white transition-colors inline-flex items-center gap-1"
+                    >
+                      ALL PROJECTS <ArrowUpRight className="w-3 h-3" />
+                    </a>
+                  </div>
+                </div>
+
+                {/* Active Skill Filter Notice */}
+                {activeSkillFilter && (
+                  <div className="flex items-center justify-between px-3.5 py-2 rounded-lg bg-zinc-950 border border-zinc-800 text-xs font-mono">
+                    <span className="text-zinc-300">
+                      Filtering by skill:{' '}
+                      <strong className="text-white">{activeSkillFilter}</strong>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setActiveSkillFilter(null)}
+                      className="text-zinc-400 hover:text-white inline-flex items-center gap-1 cursor-pointer"
+                    >
+                      <X className="w-3.5 h-3.5" /> Clear
+                    </button>
+                  </div>
+                )}
+
+                {/* Project Cards (Stacked/Grid clean layout inspired by Bryl Lim Image 2) */}
+                <div className="grid grid-cols-1 gap-6">
+                  {filteredStudies.map((study) => (
+                    <motion.div
+                      key={study.id}
+                      whileHover={{ y: -3 }}
+                      transition={{ duration: 0.2 }}
+                      onClick={() => setSelectedStudy(study)}
+                      className="group cursor-pointer rounded-2xl bg-[#09090b] border border-zinc-800/80 hover:border-zinc-600 transition-colors overflow-hidden flex flex-col sm:flex-row shadow-lg"
+                    >
+                      {/* Media preview */}
+                      <div className="sm:w-72 sm:shrink-0 aspect-video sm:aspect-auto overflow-hidden bg-black relative border-b sm:border-b-0 sm:border-r border-zinc-800/80">
+                        <img
+                          src={resolveImgSrc(study.imageUrl)}
+                          alt={study.title}
+                          referrerPolicy="no-referrer"
+                          className="w-full h-full object-cover grayscale contrast-110 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent sm:hidden" />
+                      </div>
+
+                      {/* Card Content */}
+                      <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between gap-2 text-[11px] font-mono">
+                            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-300">
+                              &lt; {study.category.toUpperCase()} &gt;
+                            </span>
+                            <span className="text-zinc-500">{study.year}</span>
+                          </div>
+
+                          <h3 className="font-display text-xl font-bold text-white group-hover:text-zinc-200 transition-colors flex items-center justify-between">
+                            <span>{study.title}</span>
+                            <ArrowUpRight className="w-4 h-4 text-zinc-500 group-hover:text-white transition-colors" />
+                          </h3>
+
+                          <p className="text-xs sm:text-sm text-zinc-400 line-clamp-2 leading-relaxed">
+                            {study.summary}
+                          </p>
+                        </div>
+
+                        {/* Skill taxonomy footer */}
+                        <div className="pt-3 border-t border-zinc-900 flex items-center justify-between text-xs font-mono text-zinc-500">
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            {study.skills.map((skill) => (
+                              <span
+                                key={skill}
+                                className="px-2 py-0.5 rounded bg-zinc-950 border border-zinc-900 text-zinc-400 text-[10px]"
+                              >
+                                {skill}
+                              </span>
+                            ))}
+                          </div>
+                          <span className="text-zinc-400 hover:text-white text-[11px] font-medium shrink-0 ml-2">
+                            Inspect Case Study →
+                          </span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </section>
+            </CursorTrailZone>
+
+            {/* ===================================================== */}
+            {/* 02 — EXPERIENCE SECTION (IMAGE 3 BRYL LIM STYLE)      */}
+            {/* ===================================================== */}
+            <section id="experience" className="space-y-6 scroll-mt-12">
+              <div className="flex items-center justify-between pb-3 border-b border-zinc-900">
+                <div className="flex items-center gap-3">
+                  <span className="font-mono text-xs text-zinc-500">02 —</span>
+                  <h2 className="font-mono text-xs font-bold text-white uppercase tracking-wider">
+                    Experience
+                  </h2>
+                </div>
+                <a
+                  href={profile.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-mono text-xs text-zinc-400 hover:text-white transition-colors inline-flex items-center gap-1"
+                >
+                  FULL HISTORY <ArrowUpRight className="w-3 h-3" />
+                </a>
+              </div>
+
+              {/* Minimal Clean Row Timeline */}
+              <div className="divide-y divide-zinc-900/80">
+                {INITIAL_EXPERIENCES.map((exp) => (
+                  <div
+                    key={exp.id}
+                    className="py-4 px-2 -mx-2 rounded-lg hover:bg-zinc-950/80 transition-colors flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 sm:gap-6 group"
+                  >
+                    <div className="sm:w-28 shrink-0 font-mono text-xs text-zinc-500">
+                      {exp.year}
+                    </div>
+
+                    <div className="flex-1 space-y-1">
+                      <div className="font-mono text-sm font-medium text-white group-hover:text-zinc-200 flex items-center gap-2">
+                        <span>{exp.role}</span>
+                        {exp.link && (
+                          <a
+                            href={exp.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-zinc-500 hover:text-white inline-block opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <ArrowUpRight className="w-3 h-3" />
+                          </a>
+                        )}
+                      </div>
+                      {exp.description && (
+                        <p className="text-xs text-zinc-400 font-sans leading-relaxed">
+                          {exp.description}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="sm:w-56 shrink-0 sm:text-right font-mono text-xs text-zinc-400">
+                      {exp.organization}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* ===================================================== */}
+            {/* 03 — STACK SECTION (IMAGE 3 BRYL LIM STYLE)           */}
+            {/* ===================================================== */}
+            <section id="stack" className="space-y-6 scroll-mt-12">
+              <div className="flex items-center justify-between pb-3 border-b border-zinc-900">
+                <div className="flex items-center gap-3">
+                  <span className="font-mono text-xs text-zinc-500">03 —</span>
+                  <h2 className="font-mono text-xs font-bold text-white uppercase tracking-wider">
+                    Stack
+                  </h2>
+                </div>
+                <span className="font-mono text-xs text-zinc-500">
+                  CLICK TO FILTER PROJECTS
+                </span>
+              </div>
+
+              {/* Horizontal Pill Tags */}
+              <div className="flex flex-wrap items-center gap-2">
+                {TECH_STACK_PILLS.map((pill) => {
+                  const isSelected = activeSkillFilter === pill;
+                  return (
+                    <button
+                      key={pill}
+                      type="button"
+                      onClick={() => handleSelectSkill(pill)}
+                      className={`px-3.5 py-2 text-xs font-mono rounded-lg border transition-all cursor-pointer ${
+                        isSelected
+                          ? 'bg-white text-black font-semibold border-white shadow-sm'
+                          : 'bg-[#09090b] text-zinc-300 border-zinc-800 hover:border-zinc-600 hover:text-white'
+                      }`}
+                    >
+                      {pill}
+                    </button>
+                  );
+                })}
+              </div>
+            </section>
+
+            {/* ===================================================== */}
+            {/* 04 — CERTIFICATIONS & BADGES (IMAGE 3 STYLE)         */}
+            {/* ===================================================== */}
+            <section id="certifications" className="space-y-6 scroll-mt-12">
+              <div className="flex items-center justify-between pb-3 border-b border-zinc-900">
+                <div className="flex items-center gap-3">
+                  <span className="font-mono text-xs text-zinc-500">04 —</span>
+                  <h2 className="font-mono text-xs font-bold text-white uppercase tracking-wider">
+                    Certifications
+                  </h2>
+                </div>
+                <a
+                  href={profile.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-mono text-xs text-zinc-400 hover:text-white transition-colors inline-flex items-center gap-1"
+                >
+                  ALL CERTIFICATIONS <ArrowUpRight className="w-3 h-3" />
+                </a>
+              </div>
+
+              {/* 3 or 4 Card Grid (Bryl Lim Image 3) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {INITIAL_CERTIFICATIONS.map((cert) => (
+                  <div
+                    key={cert.id}
+                    className="p-6 rounded-2xl bg-[#09090b] border border-zinc-800/90 hover:border-zinc-600 transition-colors flex flex-col items-center text-center justify-between space-y-6 group shadow-sm"
+                  >
+                    {/* Issuer Logo */}
+                    <div className="pt-2">
+                      <CertificationLogo type={cert.issuerType} />
+                    </div>
+
+                    {/* Title & Issuer */}
+                    <div className="space-y-1.5">
+                      <h3 className="font-display text-sm font-semibold text-white leading-snug">
+                        {cert.title}
+                      </h3>
+                      <div className="font-mono text-[11px] text-zinc-500 uppercase tracking-widest">
+                        {cert.issuer}
+                      </div>
+                    </div>
+
+                    {/* < VERIFY > Button */}
+                    <a
+                      href={cert.verifyUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-mono text-[11px] text-zinc-400 group-hover:text-white border border-zinc-800 group-hover:border-zinc-600 px-4 py-1.5 rounded-lg transition-colors inline-flex items-center gap-1"
+                    >
+                      &lt; VERIFY &gt;
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* ===================================================== */}
+            {/* 05 — AFFILIATIONS SECTION (IMAGE 4 STYLE)             */}
+            {/* ===================================================== */}
+            <section id="affiliations" className="space-y-6 scroll-mt-12">
+              <div className="flex items-center justify-between pb-3 border-b border-zinc-900">
+                <div className="flex items-center gap-3">
+                  <span className="font-mono text-xs text-zinc-500">05 —</span>
+                  <h2 className="font-mono text-xs font-bold text-white uppercase tracking-wider">
+                    Affiliations
+                  </h2>
+                </div>
+                <span className="font-mono text-xs text-zinc-500">
+                  CAMPUS &amp; COMMUNITY
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {INITIAL_AFFILIATIONS.map((affil) => (
+                  <a
+                    key={affil.id}
+                    href={affil.link || profile.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-4 rounded-xl bg-zinc-950 border border-zinc-900 hover:border-zinc-700 transition-colors flex flex-col justify-between space-y-3 group"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center font-mono text-xs font-bold text-white group-hover:bg-zinc-800 transition-colors">
+                      {affil.tag}
+                    </div>
+                    <div>
+                      <div className="font-mono text-xs font-semibold text-white group-hover:text-zinc-200">
+                        {affil.name}
+                      </div>
+                      <div className="font-mono text-[10px] text-zinc-500 uppercase tracking-wider">
+                        {affil.role}
+                      </div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </section>
+
+            {/* ===================================================== */}
+            {/* 06 — GITHUB CONTRIBUTIONS GRID (IMAGE 4 STYLE)        */}
+            {/* ===================================================== */}
+            <section className="space-y-4 pt-2">
+              <div className="flex items-center justify-between pb-3 border-b border-zinc-900">
+                <div className="flex items-center gap-3">
+                  <span className="font-mono text-xs text-zinc-500">06 —</span>
+                  <h2 className="font-mono text-xs font-bold text-white uppercase tracking-wider">
+                    GitHub
+                  </h2>
+                </div>
+                <a
+                  href={profile.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-mono text-xs text-zinc-400 hover:text-white transition-colors inline-flex items-center gap-1"
+                >
+                  @ThordyyDev <ArrowUpRight className="w-3 h-3" />
+                </a>
+              </div>
+
+              {/* Monochrome Contribution Dot Grid */}
+              <div className="p-6 rounded-2xl bg-zinc-950 border border-zinc-900 space-y-4">
+                <div className="grid grid-flow-col grid-rows-7 gap-1 sm:gap-1.5 overflow-x-auto pb-2">
+                  {Array.from({ length: 42 * 7 }).map((_, i) => {
+                    const intensity = (i * 17 + (i % 3) * 31) % 10;
+                    const opacityClass =
+                      intensity > 7
+                        ? 'bg-white'
+                        : intensity > 4
+                        ? 'bg-zinc-400'
+                        : intensity > 2
+                        ? 'bg-zinc-700'
+                        : 'bg-zinc-900';
+                    return (
+                      <div
+                        key={i}
+                        className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm ${opacityClass} transition-opacity hover:opacity-80`}
+                        title={`Day ${i + 1}`}
+                      />
+                    );
+                  })}
+                </div>
+                <div className="flex items-center justify-between text-xs font-mono text-zinc-500 pt-2 border-t border-zinc-900">
+                  <span>2,968 CONTRIBUTIONS IN THE LAST YEAR</span>
+                  <div className="flex items-center gap-1.5">
+                    <span>Less</span>
+                    <span className="w-2.5 h-2.5 rounded-sm bg-zinc-900" />
+                    <span className="w-2.5 h-2.5 rounded-sm bg-zinc-700" />
+                    <span className="w-2.5 h-2.5 rounded-sm bg-zinc-400" />
+                    <span className="w-2.5 h-2.5 rounded-sm bg-white" />
+                    <span>More</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* ===================================================== */}
+            {/* 07 — CONTACT & DIRECT DISPATCH                        */}
+            {/* ===================================================== */}
+            <section id="contact" className="space-y-6 scroll-mt-12 pb-12">
+              <div className="flex items-center justify-between pb-3 border-b border-zinc-900">
+                <div className="flex items-center gap-3">
+                  <span className="font-mono text-xs text-zinc-500">07 —</span>
+                  <h2 className="font-mono text-xs font-bold text-white uppercase tracking-wider">
+                    Contact &amp; Inquiries
+                  </h2>
+                </div>
+                <span className="font-mono text-xs text-zinc-500">
+                  CEBU, PH (UTC+8)
+                </span>
+              </div>
+
+              <div className="p-6 sm:p-8 rounded-2xl bg-[#09090b] border border-zinc-800">
                 {contactSubmitted ? (
-                  <div className="py-12 text-center space-y-4">
+                  <div className="py-8 text-center space-y-4">
                     <div className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center mx-auto">
                       <Check className="w-5 h-5" />
                     </div>
-                    <h3 className="font-display text-2xl font-bold text-white">
-                      Dispatch Recorded
+                    <h3 className="font-display text-xl font-bold text-white">
+                      Inquiry Prepared in Gmail
                     </h3>
-                    <p className="text-sm text-zinc-400 max-w-md mx-auto leading-relaxed">
-                      Thank you, {contactName}. Your inquiry regarding{' '}
-                      <span className="text-white">{contactScope}</span> has
-                      been prepared for {profile.email}.
+                    <p className="text-xs sm:text-sm text-zinc-400 max-w-md mx-auto leading-relaxed">
+                      Thank you, {contactName}. A pre-filled draft has opened directly in your browser to send to{' '}
+                      <span className="text-white">{profile.email}</span>.
                     </p>
-                    <div className="pt-4 flex items-center justify-center gap-3">
-                      <a
-                        href={`mailto:${
-                          profile.email
-                        }?subject=${encodeURIComponent(
-                          `${contactScope} — Inquiry from ${contactName}`
-                        )}&body=${encodeURIComponent(contactMessage)}`}
-                        className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-black bg-white rounded-lg hover:bg-zinc-200 transition-colors"
-                      >
-                        <Mail className="w-3.5 h-3.5" />
-                        Open in Mail Client
-                      </a>
+                    <div className="pt-2 flex items-center justify-center gap-3">
                       <button
                         type="button"
                         onClick={() => {
@@ -994,14 +1013,14 @@ export default function App() {
                           setContactEmail('');
                           setContactMessage('');
                         }}
-                        className="px-4 py-2 text-xs font-medium text-zinc-300 border border-zinc-800 rounded-lg hover:bg-zinc-900 cursor-pointer"
+                        className="px-4 py-2 text-xs font-mono text-zinc-300 border border-zinc-800 rounded-lg hover:bg-zinc-900 cursor-pointer"
                       >
-                        Send Another Message
+                        Send Another Inquiry
                       </button>
                     </div>
                   </div>
                 ) : (
-                  <form onSubmit={handleContactSubmit} className="space-y-5">
+                  <form onSubmit={handleContactSubmit} className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1.5">
                         <label
@@ -1017,7 +1036,7 @@ export default function App() {
                           value={contactName}
                           onChange={(e) => setContactName(e.target.value)}
                           placeholder="Bill Cipher"
-                          className="w-full px-3.5 py-2.5 text-sm text-white bg-[#050505] border border-zinc-800 rounded-lg focus:outline-none focus:border-white transition-colors"
+                          className="w-full px-3.5 py-2 text-sm text-white bg-[#050505] border border-zinc-800 rounded-lg focus:outline-none focus:border-white transition-colors"
                         />
                       </div>
                       <div className="space-y-1.5">
@@ -1033,8 +1052,8 @@ export default function App() {
                           required
                           value={contactEmail}
                           onChange={(e) => setContactEmail(e.target.value)}
-                          placeholder="billcipher@mindscape.com"
-                          className="w-full px-3.5 py-2.5 text-sm text-white bg-[#050505] border border-zinc-800 rounded-lg focus:outline-none focus:border-white transition-colors"
+                          placeholder="bill@domain.com"
+                          className="w-full px-3.5 py-2 text-sm text-white bg-[#050505] border border-zinc-800 rounded-lg focus:outline-none focus:border-white transition-colors"
                         />
                       </div>
                     </div>
@@ -1043,20 +1062,20 @@ export default function App() {
                       <label className="block text-xs font-mono text-zinc-400">
                         INQUIRY TYPE
                       </label>
-                      <div
-                        onMouseLeave={() => setHoveredScope(null)}
-                        className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 p-1 bg-[#050505] border border-zinc-800 rounded-lg"
-                      >
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                         {INQUIRY_OPTIONS.map((scope) => (
-                          <InquiryTypeItem
+                          <button
                             key={scope}
-                            scope={scope}
-                            isActive={contactScope === scope}
-                            isHovered={hoveredScope === scope}
-                            onMouseEnter={() => setHoveredScope(scope)}
-                            onMouseLeave={() => {}}
-                            onSelect={() => setContactScope(scope)}
-                          />
+                            type="button"
+                            onClick={() => setContactScope(scope)}
+                            className={`px-3 py-2 text-xs font-medium rounded-lg text-center cursor-pointer transition-colors ${
+                              contactScope === scope
+                                ? 'bg-white text-black font-semibold'
+                                : 'bg-[#050505] text-zinc-400 border border-zinc-800 hover:text-white'
+                            }`}
+                          >
+                            {scope}
+                          </button>
                         ))}
                       </div>
                     </div>
@@ -1070,62 +1089,52 @@ export default function App() {
                       </label>
                       <textarea
                         id="contact-message"
-                        rows={4}
+                        rows={3}
                         required
                         value={contactMessage}
                         onChange={(e) => setContactMessage(e.target.value)}
-                        placeholder="Outline your architectural goals, timeline, or team context..."
-                        className="w-full px-3.5 py-2.5 text-sm text-white bg-[#050505] border border-zinc-800 rounded-lg focus:outline-none focus:border-white transition-colors"
+                        placeholder="Outline your goals, timeline, or collaboration..."
+                        className="w-full px-3.5 py-2 text-sm text-white bg-[#050505] border border-zinc-800 rounded-lg focus:outline-none focus:border-white transition-colors"
                       />
                     </div>
+
                     <button
                       type="submit"
                       className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 text-xs font-medium text-black bg-white rounded-lg hover:bg-zinc-200 transition-colors cursor-pointer"
                     >
                       <Mail className="w-4 h-4" />
-                      Send Inquiry
+                      Send Inquiry Directly via Gmail
                     </button>
                   </form>
                 )}
               </div>
+            </section>
+          </div>
+
+          {/* Quiet Footer */}
+          <footer className="border-t border-zinc-900 py-8 px-6 bg-[#050505] text-xs font-mono text-zinc-500">
+            <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div>Jhuly Godinez III · Built with React &amp; Tailwind CSS</div>
+              <div className="flex items-center gap-4">
+                <a
+                  href={profile.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors"
+                >
+                  GitHub
+                </a>
+                <a
+                  href={`mailto:${profile.email}`}
+                  className="hover:text-white transition-colors"
+                >
+                  Email
+                </a>
+              </div>
             </div>
-          </div>
-        </section>
-      </main>
-
-      {/* QUIET EDITORIAL FOOTER */}
-      <footer className="border-t border-zinc-800/80 py-10 bg-[#050505]">
-        <div className="max-w-[1200px] mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
-          <div className="flex items-center gap-2">
-            <span className="text-zinc-500">Powered by</span>
-            <a
-              href={profile.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-zinc-300 font-medium hover:text-white transition-colors"
-            >
-              @ThordyyDev
-            </a>
-          </div>
-
-          <div className="flex items-center gap-6">
-            <a
-              href={profile.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-white transition-colors"
-            >
-              GitHub
-            </a>
-            <a
-              href={`mailto:${profile.email}`}
-              className="hover:text-white transition-colors"
-            >
-              Email
-            </a>
-          </div>
-        </div>
-      </footer>
+          </footer>
+        </main>
+      </div>
 
       {/* FULLSCREEN CASE STUDY READER MODAL */}
       <AnimatePresence>
@@ -1140,7 +1149,7 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* FLOATING BACK TO TOP BUTTON — Appears smoothly on scroll down */}
+      {/* FLOATING BACK TO TOP BUTTON */}
       <AnimatePresence>
         {showScrollTop && (
           <motion.button
@@ -1152,10 +1161,9 @@ export default function App() {
             transition={{ type: 'spring', stiffness: 400, damping: 28 }}
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             aria-label="Scroll back to top"
-            className="group fixed bottom-4 right-4 sm:bottom-8 sm:right-8 z-40 flex items-center justify-center gap-1.5 p-2.5 sm:px-3.5 sm:py-2.5 rounded-full bg-zinc-950/90 border border-zinc-800/90 backdrop-blur-xl text-zinc-400 hover:text-black hover:bg-white hover:border-white shadow-[0_10px_30px_-5px_rgba(0,0,0,0.8),0_0_0_1px_rgba(255,255,255,0.06)] transition-all duration-300 cursor-pointer"
+            className="fixed bottom-6 right-6 z-40 flex items-center justify-center p-3 rounded-full bg-zinc-950/90 border border-zinc-800 text-zinc-400 hover:text-black hover:bg-white hover:border-white shadow-2xl transition-all cursor-pointer"
           >
-            <ArrowUp className="w-4 h-4 transition-transform duration-300 group-hover:-translate-y-0.5" />
-            <span className="hidden sm:inline text-xs font-mono font-medium tracking-wide">TOP</span>
+            <ArrowUp className="w-4 h-4" />
           </motion.button>
         )}
       </AnimatePresence>
